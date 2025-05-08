@@ -9,9 +9,11 @@ import SwiftUI
 
 @main
 struct macroApp: App {
+    @StateObject private var soundManager = SoundManager.shared
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            IntroView()
+                .environmentObject(soundManager)
         }
     }
 }
