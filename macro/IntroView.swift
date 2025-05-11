@@ -13,27 +13,13 @@ class SoundManager: ObservableObject {
     static let shared = SoundManager()
     private var player: AVAudioPlayer?
 
-//    func playIntroSound() {
-//        guard let url = Bundle.main.url(forResource: "INTRO ARABIC", withExtension: "MP3") else {
-//            print("❌ Sound file 'INTRO ARABIC.mp3' not found.")
-//            return
-//        }
-//
-//        do {
-//            player = try AVAudioPlayer(contentsOf: url)
-//            player?.prepareToPlay()
-//            player?.play()
-//        } catch {
-//            print("❌ Could not play sound: \(error.localizedDescription)")
-//        }
-//    }
     func playIntroSound() {
         let userLanguage = getLanguagePreference()
 
         let fileName: String
         switch userLanguage {
         case .english:
-            fileName = "INTRO ENGLISH"
+            fileName = "INTROENGLISH"
         case .arabic:
             fileName = "INTRO ARABIC"
         }
@@ -44,6 +30,9 @@ class SoundManager: ObservableObject {
         }
 
         do {
+            try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
+            try AVAudioSession.sharedInstance().setActive(true)
+
             player = try AVAudioPlayer(contentsOf: url)
             player?.prepareToPlay()
             player?.play()
@@ -51,14 +40,22 @@ class SoundManager: ObservableObject {
             print("❌ Could not play sound: \(error.localizedDescription)")
         }
     }
-
 }
 
 // MARK: - IntroView
 struct IntroView: View {
     let userLanguage = getLanguagePreference()
-    let images = ["metroIntrance", "trainStation", "man@tran", "senasmile", "senasmile2", "sena", "sena2", "clock", "clock2"]
-    let durations: [Double] = [5.0, 5.0, 9.0, 9.0, 5.0, 6.5, 6.5, 5.0, 5.0]
+
+    var images: [String] {
+        switch userLanguage {
+        case .arabic:
+            return ["metroIntrance", "trainStation", "senasmile", "senasmile2", "man@tran", "sena", "sena2", "trainClosed", "trainOpen", "clock", "arabicname1", "arabicname2", "arabicname3"]
+        case .english:
+            return ["metroIntrance", "trainStation", "senasmile", "senasmile2", "man@tran", "sena", "sena2", "trainClosed", "trainOpen", "clock", "name1", "name2", "name3"]
+        }
+    }
+
+    let durations: [Double] = [7.0, 9.0, 6.5, 9.0, 10.0, 9.5, 9.5, 5.0, 7.0, 4.0, 3.0, 2.0, 2.0]
 
     @State private var currentIndex = 0
     @State private var slideshowStarted = false
@@ -68,32 +65,68 @@ struct IntroView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Image(images[currentIndex])
-                    .resizable()
-                    .scaledToFill()
-                    .ignoresSafeArea()
-
-                if showBlackTransition {
-                    Color.black
+                if UserDefaults.standard.bool(forKey: "hasSeenIntro") {
+                    StartView()
+                } else {
+                    Image(images[currentIndex])
+                        .resizable()
+                        .scaledToFill()
                         .ignoresSafeArea()
-                        .transition(.opacity)
-                }
 
-                Color.clear
-                    .contentShape(Rectangle())
-                    .onTapGesture {
-                        if !slideshowStarted {
-                            slideshowStarted = true
-                            SoundManager.shared.playIntroSound()
-                            startSlideshow()
+                    if showBlackTransition {
+                        Color.black
+                            .ignoresSafeArea()
+                            .transition(.opacity)
+                    }
+
+                    VStack {
+                        Spacer()
+                        HStack {
+                            Spacer()
+                            Button(action: skipIntro) {
+                                Text("Skip")
+                                    .font(.headline)
+                                    .padding(.horizontal, 16)
+                                    .padding(.vertical, 8)
+                                    .background(Color.black.opacity(0.6))
+                                    .foregroundColor(.white)
+                                    .cornerRadius(10)
+                                    .padding()
+                            }
                         }
                     }
 
-                NavigationLink(destination: StartView(), isActive: $goToStartView) {
-                    EmptyView()
+                    Color.clear
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            if !slideshowStarted {
+                                slideshowStarted = true
+                                SoundManager.shared.playIntroSound()
+                                startSlideshow()
+                            }
+                        }
+
+                    NavigationLink(destination: StartView(), isActive: $goToStartView) {
+                        EmptyView()
+                    }
                 }
             }
+            .onAppear {
+                // Optional: Uncomment to auto-start without tap
+                /*
+                if !slideshowStarted {
+                    slideshowStarted = true
+                    SoundManager.shared.playIntroSound()
+                    startSlideshow()
+                }
+                */
+            }
         }
+    }
+
+    func skipIntro() {
+        UserDefaults.standard.set(true, forKey: "hasSeenIntro")
+        goToStartView = true
     }
 
     func startSlideshow() {
@@ -120,15 +153,16 @@ struct IntroView: View {
                 }
 
                 if i == images.count - 1 {
-                    // Go to next view after final image duration
                     DispatchQueue.main.asyncAfter(deadline: .now() + durations.last!) {
-                        goToStartView = true
+                        skipIntro()
                     }
                 }
             }
         }
     }
 }
+
+
 #Preview {
     IntroView()
 }
