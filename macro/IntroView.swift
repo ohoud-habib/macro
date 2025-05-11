@@ -13,9 +13,33 @@ class SoundManager: ObservableObject {
     static let shared = SoundManager()
     private var player: AVAudioPlayer?
 
+//    func playIntroSound() {
+//        guard let url = Bundle.main.url(forResource: "INTRO ARABIC", withExtension: "MP3") else {
+//            print("❌ Sound file 'INTRO ARABIC.mp3' not found.")
+//            return
+//        }
+//
+//        do {
+//            player = try AVAudioPlayer(contentsOf: url)
+//            player?.prepareToPlay()
+//            player?.play()
+//        } catch {
+//            print("❌ Could not play sound: \(error.localizedDescription)")
+//        }
+//    }
     func playIntroSound() {
-        guard let url = Bundle.main.url(forResource: "INTRO ARABIC", withExtension: "MP3") else {
-            print("❌ Sound file 'INTRO ARABIC.mp3' not found.")
+        let userLanguage = getLanguagePreference()
+
+        let fileName: String
+        switch userLanguage {
+        case .english:
+            fileName = "INTRO ENGLISH"
+        case .arabic:
+            fileName = "INTRO ARABIC"
+        }
+
+        guard let url = Bundle.main.url(forResource: fileName, withExtension: "MP3") else {
+            print("❌ Sound file '\(fileName).mp3' not found.")
             return
         }
 
@@ -27,10 +51,12 @@ class SoundManager: ObservableObject {
             print("❌ Could not play sound: \(error.localizedDescription)")
         }
     }
+
 }
 
 // MARK: - IntroView
 struct IntroView: View {
+    let userLanguage = getLanguagePreference()
     let images = ["metroIntrance", "trainStation", "man@tran", "senasmile", "senasmile2", "sena", "sena2", "clock", "clock2"]
     let durations: [Double] = [5.0, 5.0, 9.0, 9.0, 5.0, 6.5, 6.5, 5.0, 5.0]
 
