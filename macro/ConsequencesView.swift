@@ -23,17 +23,12 @@ struct ConsequencesView: View {
     let TextContent: [String]
 
     @State private var navigateToProfile = false
-
-    
     @State private var backgroundImages: [String] = []
     @State private var currentIndex = 0
     @State private var showYearScreen = true
     @State private var showNextButton = false
     @Environment(\.presentationMode) var presentationMode
     @State private var audioPlayer: AVAudioPlayer?
-    
-
-    // Keep a strong reference to delegate to prevent deallocation
     @State private var audioDelegate: AVDelegate?
 
     init(mode: Mode, soundFiles: [String], years: [String], TextContent: [String]) {
@@ -86,6 +81,7 @@ struct ConsequencesView: View {
                 }
             }
             .onAppear {
+                BackgroundMusicManager.shared.playModeTrack(for: mode)
                 playAudioAndShowContent()
             }
             .onDisappear {
@@ -94,9 +90,10 @@ struct ConsequencesView: View {
             .navigationBarBackButtonHidden(true)
         }
         NavigationLink(destination: ProfileView(), isActive: $navigateToProfile) {
-                    EmptyView()
-                }
+            EmptyView()
+        }
     }
+
     private var yearDisplayView: some View {
         ZStack {
             Color.blue3.opacity(0.8).edgesIgnoringSafeArea(.all)
@@ -109,7 +106,6 @@ struct ConsequencesView: View {
     private var scenarioView: some View {
         VStack {
             Spacer()
-            
             Text(TextContent[currentIndex])
                 .multilineTextAlignment(.center)
                 .font(.title2)
@@ -119,7 +115,6 @@ struct ConsequencesView: View {
                 .cornerRadius(12)
                 .padding(.horizontal)
                 .padding(.top, 250)
-            
             Spacer()
         }
     }
@@ -172,21 +167,6 @@ struct ConsequencesView: View {
         }
     }
 
-//    private func nextAction() {
-//        audioPlayer?.stop()
-//        currentIndex += 1
-//        
-//        if currentIndex < soundFiles.count {
-//            showYearScreen = true
-//            showNextButton = false
-//            
-//            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-//                playAudioAndShowContent()
-//            }
-//        } else {
-//            presentationMode.wrappedValue.dismiss()
-//        }
-//    }
     private func nextAction() {
         audioPlayer?.stop()
         
@@ -194,11 +174,9 @@ struct ConsequencesView: View {
             currentIndex += 1
             playAudioAndShowContent()
         } else {
-            // Final item reached, navigate to ProfileView
             navigateToProfile = true
         }
     }
-
 }
 
 // MARK: - AVAudioPlayerDelegate Wrapper
@@ -234,3 +212,4 @@ struct ConsequencesView_Previews: PreviewProvider {
         .previewInterfaceOrientation(.landscapeLeft)
     }
 }
+

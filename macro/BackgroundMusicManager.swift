@@ -8,55 +8,125 @@ import Foundation
 import AVFoundation
 import SwiftUI
 
-class BackgroundMusicManager: ObservableObject {
+class BackgroundMusicManager: NSObject, ObservableObject, AVAudioPlayerDelegate {
     static let shared = BackgroundMusicManager()
-    private var audioPlayer: AVAudioPlayer?
+    
+    private var mainPlayer: AVAudioPlayer?
+    private var modePlayer: AVAudioPlayer?
     
     @AppStorage("isMusicOn") var isMusicOn: Bool = true {
         didSet {
             if isMusicOn {
-                playMusic()
+                playMainTheme()
             } else {
-                pauseMusic()
+                pauseAll()
             }
         }
     }
     
-    init() {
-        setupAudioPlayer()
+    override init() {
+        super.init()
+        setupMainTheme()
     }
     
-    private func setupAudioPlayer() {
-        // Load the game music
+    // MARK: - Setup
+    private func setupMainTheme() {
         if let path = Bundle.main.path(forResource: "GAME MAIN THEME", ofType: "mp3") {
             let url = URL(fileURLWithPath: path)
             do {
-                audioPlayer = try AVAudioPlayer(contentsOf: url)
-                audioPlayer?.numberOfLoops = -1
-                audioPlayer?.volume = 0.5
+                mainPlayer = try AVAudioPlayer(contentsOf: url)
+                mainPlayer?.numberOfLoops = -1
+                mainPlayer?.volume = 0.5
                 if isMusicOn {
-                    playMusic()
+                    playMainTheme()
                 }
             } catch {
-                print("Error loading music: \(error.localizedDescription)")
+                print("Error loading main theme: \(error.localizedDescription)")
             }
         }
     }
     
-    func playMusic() {
-        // Only play if not already playing
-        if audioPlayer?.isPlaying == false {
-            audioPlayer?.play()
+    // MARK: - Main Theme Controls
+    func playMainTheme() {
+        guard isMusicOn, mainPlayer?.isPlaying == false else { return }
+        mainPlayer?.play()
+    }
+    
+    func pauseMainTheme() {
+        mainPlayer?.pause()
+    }
+    
+    func pauseAll() {
+        mainPlayer?.pause()
+        modePlayer?.pause()
+    }
+
+    func fadeOutMainTheme(duration: TimeInterval = 1.0) {
+        guard let player = mainPlayer, player.isPlaying else { return }
+        fade(player: player, toVolume: 0, duration: duration) {
+            player.pause()
+            player.volume = 0.5
+        }
+    }
+
+    func fadeInMainTheme(duration: TimeInterval = 1.0) {
+        guard let player = mainPlayer, !player.isPlaying, isMusicOn else { return }
+        player.volume = 0
+        player.play()
+        fade(player: player, toVolume: 0.5, duration: duration)
+    }
+
+    private func fade(player: AVAudioPlayer, toVolume target: Float, duration: TimeInterval, completion: (() -> Void)? = nil) {
+        let steps = Int(duration / 0.1)
+        let delta = (target - player.volume) / Float(steps)
+        
+        Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { timer in
+            player.volume += delta
+            if (delta > 0 && player.volume >= target) || (delta < 0 && player.volume <= target) {
+                player.volume = target
+                timer.invalidate()
+                completion?()
+            }
+        }
+    }
+
+    // MARK: - Mode Music Playback
+    func playModeTrack(for mode: Mode) {
+        fadeOutMainTheme()
+
+        let filename: String
+        switch mode {
+        case .Horror:
+            filename = "Horror Theme Mode"
+        case .Comics:
+            filename = "Comic Theme Mode"
+        case .UtopianDystopian:
+            filename = "Dystopian Theme Mode"
+        }
+
+        if let url = Bundle.main.url(forResource: filename, withExtension: "mp3") {
+            do {
+                modePlayer = try AVAudioPlayer(contentsOf: url)
+                modePlayer?.delegate = self
+                modePlayer?.volume = 1.0
+                modePlayer?.play()
+            } catch {
+                print("Failed to play mode track: \(error)")
+            }
+        } else {
+            print("Track not found: \(filename)")
         }
     }
     
-    func pauseMusic() {
-        // Only pause if it's currently playing
-        if audioPlayer?.isPlaying == true {
-            audioPlayer?.pause()
+    // MARK: - AVAudioPlayerDelegate
+    func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
+        if player == modePlayer {
+            modePlayer = nil
+            fadeInMainTheme()
         }
     }
 }
+
 
 
 
