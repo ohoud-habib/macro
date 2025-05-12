@@ -4,7 +4,6 @@
 //
 //  Created by Manar Majeed Alrasheed on 13/11/1446 AH.
 //
-
 import Foundation
 import AVFoundation
 import SwiftUI
@@ -28,7 +27,8 @@ class BackgroundMusicManager: ObservableObject {
     }
     
     private func setupAudioPlayer() {
-        if let path = Bundle.main.path(forResource: "the-unveiling-royalty-free-music", ofType: "mp3") {
+        // Load the game music
+        if let path = Bundle.main.path(forResource: "GAME MAIN THEME", ofType: "mp3") {
             let url = URL(fileURLWithPath: path)
             do {
                 audioPlayer = try AVAudioPlayer(contentsOf: url)
@@ -44,10 +44,20 @@ class BackgroundMusicManager: ObservableObject {
     }
     
     func playMusic() {
-        audioPlayer?.play()
+        // Only play if not already playing
+        if audioPlayer?.isPlaying == false {
+            audioPlayer?.play()
+        }
     }
     
     func pauseMusic() {
-        audioPlayer?.pause()
+        // Only pause if it's currently playing
+        if audioPlayer?.isPlaying == true {
+            audioPlayer?.pause()
+        }
     }
 }
+
+
+
+

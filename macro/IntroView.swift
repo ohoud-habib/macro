@@ -13,15 +13,22 @@ class SoundManager: ObservableObject {
     static let shared = SoundManager()
     private var player: AVAudioPlayer?
 
-    func playIntroSound() {
-        let userLanguage = getLanguagePreference()
+    enum SoundType {
+        case intro
+        case mainTheme
+    }
 
+    func play(sound type: SoundType) {
         let fileName: String
-        switch userLanguage {
-        case .english:
-            fileName = "INTROENGLISH"
-        case .arabic:
-            fileName = "INTRO ARABIC"
+
+        switch type {
+        case .intro:
+            switch getLanguagePreference() {
+            case .english: fileName = "INTROENGLISH"
+            case .arabic: fileName = "INTRO ARABIC"
+            }
+        case .mainTheme:
+            fileName = "GAME MAIN THEME" // Ensure the file is named exactly like this (no extension)
         }
 
         guard let url = Bundle.main.url(forResource: fileName, withExtension: "MP3") else {
@@ -32,15 +39,20 @@ class SoundManager: ObservableObject {
         do {
             try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
             try AVAudioSession.sharedInstance().setActive(true)
-
             player = try AVAudioPlayer(contentsOf: url)
+            player?.numberOfLoops = type == .mainTheme ? -1 : 0
             player?.prepareToPlay()
             player?.play()
         } catch {
             print("❌ Could not play sound: \(error.localizedDescription)")
         }
     }
+
+    func stop() {
+        player?.stop()
+    }
 }
+
 
 // MARK: - IntroView
 struct IntroView: View {
@@ -67,6 +79,9 @@ struct IntroView: View {
             ZStack {
                 if UserDefaults.standard.bool(forKey: "hasSeenIntro") {
                     StartView()
+                        .onAppear {
+                            SoundManager.shared.play(sound: .mainTheme)
+                        }
                 } else {
                     Image(images[currentIndex])
                         .resizable()
@@ -96,35 +111,25 @@ struct IntroView: View {
                         }
                     }
 
-                    Color.clear
-                        .contentShape(Rectangle())
-                        .onTapGesture {
-                            if !slideshowStarted {
-                                slideshowStarted = true
-                                SoundManager.shared.playIntroSound()
-                                startSlideshow()
-                            }
-                        }
-
                     NavigationLink(destination: StartView(), isActive: $goToStartView) {
                         EmptyView()
                     }
                 }
             }
             .onAppear {
-                // Optional: Uncomment to auto-start without tap
-                /*
-                if !slideshowStarted {
+                if !slideshowStarted && !UserDefaults.standard.bool(forKey: "hasSeenIntro") {
                     slideshowStarted = true
-                    SoundManager.shared.playIntroSound()
+                    SoundManager.shared.play(sound: .intro)
                     startSlideshow()
                 }
-                */
             }
         }
     }
 
     func skipIntro() {
+        SoundManager.shared.stop()
+        SoundManager.shared.play(sound: .mainTheme)
+
         UserDefaults.standard.set(true, forKey: "hasSeenIntro")
         goToStartView = true
     }
@@ -137,13 +142,17 @@ struct IntroView: View {
 
             if i == 3 || i == 5 {
                 DispatchQueue.main.asyncAfter(deadline: .now() + accumulatedDelay - 0.5) {
-                    withAnimation(.easeInOut(duration: 0.5)) {
-                        showBlackTransition = true
+                    if !goToStartView {
+                        withAnimation(.easeInOut(duration: 0.5)) {
+                            showBlackTransition = true
+                        }
                     }
                 }
             }
 
             DispatchQueue.main.asyncAfter(deadline: .now() + accumulatedDelay) {
+                if goToStartView { return }
+
                 currentIndex = i
 
                 if i == 3 || i == 5 {
@@ -154,7 +163,9 @@ struct IntroView: View {
 
                 if i == images.count - 1 {
                     DispatchQueue.main.asyncAfter(deadline: .now() + durations.last!) {
-                        skipIntro()
+                        if !goToStartView {
+                            skipIntro()
+                        }
                     }
                 }
             }
