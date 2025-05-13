@@ -29,12 +29,20 @@ import AVFoundation
 import SwiftData
 
 // Sound Manager to play random startup sounds
+import AVFoundation
+
 class StartupSoundManager {
     static let shared = StartupSoundManager()
     
     private var players: [AVAudioPlayer] = []
     
     func playRandomStartupSound() {
+        // Only play sound if the user has seen the intro before
+        let hasSeenIntro = UserDefaults.standard.bool(forKey: "hasSeenIntro")
+        
+        // If the intro hasn't been seen yet, don't play the sound
+        guard hasSeenIntro else { return }
+        
         stopAllSounds()
         
         // Get language-specific sound files
@@ -82,21 +90,28 @@ class StartupSoundManager {
     }
 }
 
+
+import SwiftUI
+import SwiftData
+
 @main
 struct macroApp: App {
     @State private var showLanguageSelection = !isLanguageSet()
     @Environment(\.scenePhase) private var scenePhase // To track app lifecycle state
-    
     @State private var hasPlayedSound = false // Track if the sound has been played
+    @State private var showSplashScreen = true // Flag to show splash screen
 
     var body: some Scene {
         WindowGroup {
-            AppInitializerView(showLanguageSelection: $showLanguageSelection)
+            AppInitializerView(showLanguageSelection: $showLanguageSelection, showSplashScreen: $showSplashScreen)
                 .onChange(of: scenePhase) { newPhase in
                     if newPhase == .active && !hasPlayedSound {
-                        // Play a random startup sound only once when the app is reinitialized
-                        StartupSoundManager.shared.playRandomStartupSound()
-                        hasPlayedSound = true // Set flag to true after playing the sound
+                        // Check if the intro has been seen
+                        if UserDefaults.standard.bool(forKey: "hasSeenIntro") {
+                            // Play the random startup sound
+                            StartupSoundManager.shared.playRandomStartupSound()
+                            hasPlayedSound = true // Set flag to true after playing the sound
+                        }
                     }
                 }
         }
@@ -108,20 +123,28 @@ struct macroApp: App {
 
 
 
+
+
+import SwiftUI
+
 struct AppInitializerView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var users: [UserModel]
     @Binding var showLanguageSelection: Bool
+    @Binding var showSplashScreen: Bool
 
     var body: some View {
         Group {
-            if showLanguageSelection {
-                LanguageSelectionView {
-                    showLanguageSelection = false
-                }
+            if showSplashScreen {
+                SplashPage()
             } else {
-//                StartView()
-                IntroView()
+                if showLanguageSelection {
+                    LanguageSelectionView {
+                        showLanguageSelection = false
+                    }
+                } else {
+                    IntroView()
+                }
             }
         }
         .onAppear {
@@ -130,9 +153,14 @@ struct AppInitializerView: View {
                 modelContext.insert(user)
                 try? modelContext.save()
             }
+            // After the splash screen is shown for a few seconds, hide it and show the language selection or intro
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                showSplashScreen = false // Hide splash screen after 2 seconds
+            }
         }
     }
 }
+
 
 struct AppButton: View {
     let title: String
@@ -195,4 +223,53 @@ struct LanguageSelectionView_Previews: PreviewProvider {
         LanguageSelectionView {}
         .previewInterfaceOrientation(.landscapeLeft)
     }
+}
+
+
+import SwiftUI
+
+struct SplashPage: View {
+    @State private var isActive: Bool = false
+    @State private var currentImageIndex: Int = 0
+
+    // Array of image names to cycle through
+    let images = ["name1", "name2", "name3"] // Add your image names here
+    let animationDuration: Double = 0.0001 // Time interval for each image change
+    
+    var body: some View {
+        ZStack {
+            if self.isActive {
+                StartView() // Content to show after splash
+            } else {
+                // Display cycling images
+                Image(images[currentImageIndex])
+                    .resizable()
+                    .scaledToFill()
+                    .edgesIgnoringSafeArea(.all)
+                
+            }
+        }
+        .onAppear {
+            startImageCycling()
+            // Transition to the main view after a delay
+            DispatchQueue.main.asyncAfter(deadline: .now() + 7) {
+                withAnimation {
+                    self.isActive = true
+                }
+            }
+        }
+    }
+    
+    // Function to cycle through the images
+    private func startImageCycling() {
+        Timer.scheduledTimer(withTimeInterval: animationDuration, repeats: true) { _ in
+            withAnimation {
+                currentImageIndex = (currentImageIndex + 1) % images.count
+            }
+        }
+    }
+}
+
+#Preview {
+    SplashPage()
 }
