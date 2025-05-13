@@ -4,21 +4,6 @@
 //
 //  Created by ohoud on 07/11/1446 AH.
 //
-
-//import SwiftUI
-//
-//@main
-//struct macroApp: App {
-//    @StateObject private var soundManager = SoundManager.shared
-//    var body: some Scene {
-//        WindowGroup {
-//            LanguageSelectionView(onLanguageSelected: <#() -> Void#>)
-////            StartView()
-////            IntroView()
-//                .environmentObject(soundManager)
-//        }
-//    }
-//}
 import SwiftUI
 import SwiftData
 enum AppLanguage: String {
@@ -82,6 +67,24 @@ struct AppInitializerView: View {
     }
 }
 
+struct AppButton: View {
+    let title: String
+    let action: () -> Void
+
+    var body: some View {
+        Button(title, action: action)
+            .frame(width: 134.6, height: 46)
+            .font(.system(size: 20, weight: .bold))
+            .background(Color.btn)
+            .foregroundColor(.black)
+            .cornerRadius(10)
+            .overlay(
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(Color.black, lineWidth: 0.5)
+            )
+    }
+}
+
 
 struct LanguageSelectionView: View {
     
@@ -90,37 +93,33 @@ struct LanguageSelectionView: View {
 
     var body: some View {
         ZStack{
-//            Image("backgroundImageName")
-//                    .resizable()
-//                    .scaledToFill()
-//                    .ignoresSafeArea()
-            Color(.blue3)
+            Image("ChoosingLanguageBG")
+                    .resizable()
+                    .scaledToFill()
                     .ignoresSafeArea()
-            VStack(spacing: 30) {
-                Text("Choose Your Language")
-                    .font(.title)
-                    .foregroundColor(.white)
+            
                 
-                HStack(spacing: 20) {
-                    Button("English") {
-                        saveLanguagePreference(.english)
-                        onLanguageSelected()
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .tint(.blue1)
-                    .shadow(color: .blue1, radius: 5)
-                    
-                    
-                    Button("العربية") {
-                        saveLanguagePreference(.arabic)
-                        onLanguageSelected()
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .tint(.blue1)
-                    .shadow(color: .blue1, radius: 5)
+            VStack(alignment: .center, spacing: 30) {
+                Text("Choose your preferred language\nاختر لغتك المفضلة")
+                    .foregroundColor(.black)
+                    .multilineTextAlignment(.center)
+                    .font(.title)
+                    .bold()
 
+                AppButton(title: "English") {
+                    saveLanguagePreference(.english)
+                    onLanguageSelected()
+                }
+
+                AppButton(title: "العربية") {
+                    saveLanguagePreference(.arabic)
+                    onLanguageSelected()
                 }
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.leading, 40)
+
+            
         }
     }
 }

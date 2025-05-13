@@ -17,7 +17,8 @@ class UserModel {
     }
     func resetProgress(context: ModelContext) {
             self.karma = 0
-            context.insert(self) // Only needed if it's a new object
-            try? context.save()  // Save changes
+            context.insert(self) 
+            try? context.save()
         }
+    
 }

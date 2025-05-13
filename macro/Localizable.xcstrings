@@ -1,0 +1,34 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "" : {
+
+    },
+    "Choose your preferred language\nاختر لغتك المفضلة" : {
+
+    },
+    "English" : {
+
+    },
+    "SCORE:\n%lld" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "نقاطك"
+          }
+        }
+      }
+    },
+    "Skip" : {
+
+    },
+    "العربية" : {
+
+    },
+    "نقاطك:\n%lld" : {
+
+    }
+  },
+  "version" : "1.0"
+}

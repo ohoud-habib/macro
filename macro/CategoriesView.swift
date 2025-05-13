@@ -13,10 +13,12 @@ struct CategoriesView: View {
     var body: some View {
         NavigationView {
             ZStack(alignment: .bottomTrailing) {
-                // Background Image
-                Image("categoriesBG")
+                // Background Image (based on language)
+                Image(getLanguagePreference() == .arabic ? "categoriesBG_ar" : "categoriesBG_en")
                     .resizable()
+                    .scaledToFill()
                     .ignoresSafeArea()
+
                 
                 VStack {
                     // Top bar icons
@@ -45,9 +47,9 @@ struct CategoriesView: View {
                             ZStack {
                                 Circle()
                                     .fill(selectedStationIndex == index ? Color.green : Color.black)
-                                    .frame(width: 13, height: 13)
+                                    .frame(width: 16, height: 16)
                                     .padding(.horizontal, -105)
-.padding(.top, 10)
+.padding(.top, 25)
                             }
                             .onTapGesture {
                                 selectedStationIndex = index
@@ -78,91 +80,3 @@ struct CategoriesView: View {
     CategoriesView()
         .previewInterfaceOrientation(.landscapeLeft)
 }
-
-//
-//import SwiftUI
-//
-//struct CategoriesView: View {
-//    @State private var selectedStationIndex: Int? = nil
-//    let stations = ["MEDICINE & MIND", "HEALTH & BODY", "ART & DESIGN", "HISTORY"]
-//
-//    var body: some View {
-//        NavigationView {
-//            ZStack {
-//                // Background Image
-//                Image("categoriesBG")
-//                    .resizable()
-//                    .ignoresSafeArea()
-//
-//
-//                VStack {
-//                    // Top bar icons
-//                    HStack {
-//                        Image("profileIcon")
-//                            .resizable()
-//                            .frame(width: 60, height: 60)
-//
-//                        Spacer()
-//
-//                        Image("settingIcon")
-//                            .resizable()
-//                            .frame(width: 60, height: 60)
-//                    }
-//                    .padding(.top)
-//
-//                    Spacer()
-//
-//
-//                    // Station Line
-//                    HStack(spacing: 86) {
-//                        ForEach(stations.indices, id: \.self) { index in
-//                            VStack {
-//                                ZStack {
-//                                    if selectedStationIndex == index {
-//                                        Circle()
-//                                            .fill(Color.green)
-//                                            .frame(width: 13, height: 13)
-//                                            .padding(.horizontal, -105)
-//                                            .padding(.top, 10)
-//                                    } else {
-//                                        Circle()
-//                                            .fill(Color.black)
-//                                            .frame(width: 13, height: 13)
-//                                            .padding(.horizontal, -105)
-//                                            .padding(.top, 10)
-//                                    }
-//                                }
-//
-//                            }
-//                            .onTapGesture {
-//                                selectedStationIndex = index
-//                            }
-//                        }
-//
-//
-//                    }
-//
-//
-//                    Spacer()
-//
-//                    // Navigation Button
-//                    if let selectedIndex = selectedStationIndex {
-//                        NavigationLink(destination: TrainDoorView(selectedCategory: stations[selectedIndex])) {
-//                            Image("nextIcon")
-//                                .resizable()
-//                                .frame(width: 50, height: 50, alignment: .trailing)
-//
-//                        }
-//                        .padding()
-//                    }
-//                }
-//            }
-//        }
-//        .navigationBarBackButtonHidden(true)
-//    }
-//}
-//
-//#Preview {
-//    CategoriesView()
-//        .previewInterfaceOrientation(.landscapeLeft)
-//}
