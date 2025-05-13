@@ -36,10 +36,19 @@ struct macroApp: App {
         WindowGroup {
             AppInitializerView(showLanguageSelection: $showLanguageSelection)
                 .environmentObject(soundManager)
+                .onAppear {
+                    // Ensure app language is set before playing any sounds
+                    let currentLanguage = getLanguagePreference()
+                    BackgroundMusicManager.shared.appLanguage = currentLanguage
+                    BackgroundMusicManager.shared.playRandomIntroClipOnce() // Play intro clip in the correct language
+                }
         }
         .modelContainer(for: UserModel.self)
     }
 }
+
+
+
 
 struct AppInitializerView: View {
     @Environment(\.modelContext) private var modelContext

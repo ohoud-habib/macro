@@ -27,6 +27,8 @@ extension String {
 
 // MARK: - Settings View
 
+// MARK: - Settings View
+
 struct SettingsView: View {
     @Query private var users: [UserModel]
     @Environment(\.modelContext) private var modelContext
@@ -129,6 +131,10 @@ struct SettingsView: View {
         Button {
             selectedLanguage = language
             saveLanguagePreference(language)
+
+            // Update language in BackgroundMusicManager and play intro clip
+            BackgroundMusicManager.shared.appLanguage = language
+            BackgroundMusicManager.shared.playRandomIntroClipOnce() // Play intro clip for the new language
         } label: {
             Label(
                 (language == .english ? "English" : "Arabic").localized(for: selectedLanguage),
@@ -137,6 +143,9 @@ struct SettingsView: View {
         }
     }
 }
+
+// MARK: - SettingToggle View
+
 struct SettingToggle: View {
     let text: String
     let onImage: String
@@ -162,6 +171,9 @@ struct SettingToggle: View {
         .frame(width: 330)
     }
 }
+
+// MARK: - SettingResetButton View
+
 struct SettingResetButton: View {
     var text: String
     var image: String
@@ -184,4 +196,8 @@ struct SettingResetButton: View {
             .frame(width: 330)
         }
     }
+}
+
+#Preview {
+    SettingsView()
 }
