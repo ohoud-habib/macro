@@ -3,7 +3,9 @@
 //  macro
 //
 //  Created by ohoud on 10/11/1446 AH.
-//
+
+
+
 import SwiftUI
 
 struct StartView: View {
@@ -71,10 +73,12 @@ struct StartView: View {
 struct StartView_Previews: PreviewProvider {
     static var previews: some View {
         StartView()
-            .environmentObject(BackgroundMusicManager.shared)
+        
             .previewInterfaceOrientation(.landscapeLeft)
     }
 }
+
+
 
 struct TrainDoorView: View {
     let selectedCategory: String

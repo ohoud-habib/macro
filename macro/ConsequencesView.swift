@@ -12,7 +12,7 @@ enum Mode: String, CaseIterable {
     case Horror = "Horror"
     case Comics = "Comics"
     case UtopianDystopian = "Utopian/Dystopian"
-    case main = "Main"
+
 }
 
 // MARK: - Main View
@@ -43,8 +43,6 @@ struct ConsequencesView: View {
             _backgroundImages = State(initialValue: ["comic_bg_1", "comic_bg_2", "comic_bg_3"])
         case .UtopianDystopian:
             _backgroundImages = State(initialValue: ["utopia_bg1", "utopia_bg2", "utopia_bg3"])
-        case .main:
-            _backgroundImages = State(initialValue: ["", "", ""])
         }
     }
 
@@ -82,13 +80,6 @@ struct ConsequencesView: View {
                 }
                 
             }
-            .onAppear {
-                BackgroundMusicManager.shared.playModeTrack(for: mode)
-                playAudioAndShowContent()
-            }
-            .onDisappear {
-                BackgroundMusicManager.shared.playModeTrack(for: .main)
-            }
             .navigationBarBackButtonHidden(true)
         }
         NavigationLink(destination: ProfileView(), isActive: $navigateToProfile) {
@@ -125,7 +116,7 @@ struct ConsequencesView: View {
         VStack {
             HStack {
                 Button(action: { presentationMode.wrappedValue.dismiss()
-                    BackgroundMusicManager.shared.playModeTrack(for: .main)
+                   
                 }) {
                     Image(systemName: "xmark.circle.fill")
                         .font(.title)

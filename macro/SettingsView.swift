@@ -38,6 +38,36 @@ enum SystemSoundType {
     }
 }
 
+class BackgroundMusicManager: ObservableObject {
+    static let shared = BackgroundMusicManager()
+    private var player: AVAudioPlayer?
+    
+    // Play background music
+    func play() {
+        guard let url = Bundle.main.url(forResource: "GAME MAIN THEME", withExtension: "MP3") else {
+            print("❌ Background music file not found.")
+            return
+        }
+
+        do {
+            try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
+            try AVAudioSession.sharedInstance().setActive(true)
+            player = try AVAudioPlayer(contentsOf: url)
+            player?.numberOfLoops = -1 // Loop indefinitely
+            player?.prepareToPlay()
+            player?.play()
+        } catch {
+            print("❌ Could not play background music: \(error.localizedDescription)")
+        }
+    }
+
+    // Stop background music
+    func stop() {
+        player?.stop()
+    }
+}
+
+
 class SystemSoundManager {
     static let shared = SystemSoundManager()
 
@@ -49,127 +79,128 @@ class SystemSoundManager {
 }
 
 // MARK: - Settings View
+    struct SettingsView: View {
+        @Query private var users: [UserModel]
+        @Environment(\.modelContext) private var modelContext
+        @AppStorage("isSoundOn") private var isSoundOn = true
+        @AppStorage("isMusicOn") private var isMusicOn = true // Add @AppStorage to control music toggle
 
-struct SettingsView: View {
-    @Query private var users: [UserModel]
-    @Environment(\.modelContext) private var modelContext
-    @State private var selectedLanguage: AppLanguage = getLanguagePreference()
-    @AppStorage("isSoundOn") private var isSoundOn = true
+        @State private var selectedLanguage: AppLanguage = getLanguagePreference()
 
-    var body: some View {
-        ZStack(alignment: .topLeading) {
-            Image("SettingBG").resizable().scaledToFill().ignoresSafeArea()
+        var body: some View {
+            ZStack(alignment: .topLeading) {
+                Image("SettingBG").resizable().scaledToFill().ignoresSafeArea()
 
-            sideButtons
-                .padding(.top, 20)
-                .padding(.leading, 20)
-                .environment(\.layoutDirection, .leftToRight)
+                sideButtons
+                    .padding(.top, 20)
+                    .padding(.leading, 20)
+                    .environment(\.layoutDirection, .leftToRight)
 
-            content
-                .padding(.top, 70)
-                .padding(.leading, 200)
+                content
+                    .padding(.top, 70)
+                    .padding(.leading, 200)
+            }
         }
-    }
 
-    private var sideButtons: some View {
-        VStack(spacing: 20) {
-            navButton("profileIcon", destination: ProfileView())
-            navButton("homeIcon", destination: StartView())
-            Spacer()
+        private var sideButtons: some View {
+            VStack(spacing: 20) {
+                navButton("profileIcon", destination: ProfileView())
+                navButton("homeIcon", destination: StartView())
+                Spacer()
+            }
         }
-    }
 
-    private func navButton(_ image: String, destination: some View) -> some View {
-        NavigationLink(destination: destination.navigationBarBackButtonHidden(true)) {
-            Image(image).resizable().frame(width: 60, height: 60)
-        }
-        .simultaneousGesture(TapGesture().onEnded {
-            SystemSoundManager.shared.play(.button)
-        })
-    }
-
-    private var content: some View {
-        VStack(spacing: 20) {
-            languagePicker
-
-            SettingToggle(
-                text: "Sound", onImage: "Sound", offImage: "Mute",
-                isOn: $isSoundOn, activeColor: .black, language: selectedLanguage
-            )
-
-            SettingToggle(
-                text: "Music", onImage: "Music", offImage: "musicOff",
-                isOn: .init(
-                    get: { BackgroundMusicManager.shared.isMusicOn },
-                    set: {
-                        BackgroundMusicManager.shared.isMusicOn = $0
-                        SystemSoundManager.shared.play(.toggle)
-                    }
-                ),
-                activeColor: .black, language: selectedLanguage
-            )
-
-            SettingResetButton(
-                text: "Reset Progress", image: "Reset", language: selectedLanguage
-            ) {
+        private func navButton(_ image: String, destination: some View) -> some View {
+            NavigationLink(destination: destination.navigationBarBackButtonHidden(true)) {
+                Image(image).resizable().frame(width: 60, height: 60)
+            }
+            .simultaneousGesture(TapGesture().onEnded {
                 SystemSoundManager.shared.play(.button)
-                users.first?.resetProgress(context: modelContext)
-            }
-
-            Spacer()
+            })
         }
-    }
 
-    private var languagePicker: some View {
-        HStack {
-            if selectedLanguage == .arabic {
-                languageMenu
+        private var content: some View {
+            VStack(spacing: 20) {
+                languagePicker
+
+                SettingToggle(
+                    text: "Sound", onImage: "Sound", offImage: "Mute",
+                    isOn: $isSoundOn, activeColor: .black, language: selectedLanguage
+                )
+
+                // Music toggle added for controlling bg.mp3
+                SettingToggle(
+                    text: "Music", onImage: "Music", offImage: "musicOff",
+                    isOn: $isMusicOn, activeColor: .black, language: selectedLanguage
+                )
+                .onChange(of: isMusicOn) { newValue in
+                    if newValue {
+                        BackgroundMusicManager.shared.play()
+                    } else {
+                        BackgroundMusicManager.shared.stop()
+                    }
+                }
+
+                SettingResetButton(
+                    text: "Reset Progress", image: "Reset", language: selectedLanguage
+                ) {
+                    SystemSoundManager.shared.play(.button)
+                    users.first?.resetProgress(context: modelContext)
+                }
+
                 Spacer()
-                Text("LANGUAGE".localized(for: selectedLanguage)).font(.headline).bold().padding(.trailing, 10)
-                Image("languageIcon").resizable().frame(width: 50, height: 50)
-            } else {
-                Image("languageIcon").resizable().frame(width: 50, height: 50)
-                Text("LANGUAGE".localized(for: selectedLanguage)).font(.headline).bold().padding(.leading, 10)
-                Spacer()
-                languageMenu
             }
         }
-        .frame(width: 330)
-    }
 
-    private var languageMenu: some View {
-        Menu {
-            languageButton(.english)
-            languageButton(.arabic)
-        } label: {
+        private var languagePicker: some View {
             HStack {
-                Text(selectedLanguage == .english ? "English" : "العربية")
-                    .font(.system(size: 15, weight: .bold))
-                Image(systemName: "chevron.down").font(.system(size: 12, weight: .medium))
+                if selectedLanguage == .arabic {
+                    languageMenu
+                    Spacer()
+                    Text("LANGUAGE".localized(for: selectedLanguage)).font(.headline).bold().padding(.trailing, 10)
+                    Image("languageIcon").resizable().frame(width: 50, height: 50)
+                } else {
+                    Image("languageIcon").resizable().frame(width: 50, height: 50)
+                    Text("LANGUAGE".localized(for: selectedLanguage)).font(.headline).bold().padding(.leading, 10)
+                    Spacer()
+                    languageMenu
+                }
             }
-            .frame(width: 112, height: 38.3)
-            .background(Color.black)
-            .foregroundColor(.white)
-            .cornerRadius(10)
-            .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.black, lineWidth: 0.5))
+            .frame(width: 330)
+        }
+
+        private var languageMenu: some View {
+            Menu {
+                languageButton(.english)
+                languageButton(.arabic)
+            } label: {
+                HStack {
+                    Text(selectedLanguage == .english ? "English" : "العربية")
+                        .font(.system(size: 15, weight: .bold))
+                    Image(systemName: "chevron.down").font(.system(size: 12, weight: .medium))
+                }
+                .frame(width: 112, height: 38.3)
+                .background(Color.black)
+                .foregroundColor(.white)
+                .cornerRadius(10)
+                .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.black, lineWidth: 0.5))
+            }
+        }
+
+        private func languageButton(_ language: AppLanguage) -> some View {
+            Button {
+                selectedLanguage = language
+                saveLanguagePreference(language)
+                SystemSoundManager.shared.play(.button)
+            } label: {
+                Label(
+                    (language == .english ? "English" : "Arabic").localized(for: selectedLanguage),
+                    systemImage: selectedLanguage == language ? "checkmark" : ""
+                )
+            }
         }
     }
 
-    private func languageButton(_ language: AppLanguage) -> some View {
-        Button {
-            selectedLanguage = language
-            saveLanguagePreference(language)
-            BackgroundMusicManager.shared.appLanguage = language
-            BackgroundMusicManager.shared.playRandomIntroClipOnce()
-            SystemSoundManager.shared.play(.button)
-        } label: {
-            Label(
-                (language == .english ? "English" : "Arabic").localized(for: selectedLanguage),
-                systemImage: selectedLanguage == language ? "checkmark" : ""
-            )
-        }
-    }
-}
 
 // MARK: - SettingToggle View
 

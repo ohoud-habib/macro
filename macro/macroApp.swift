@@ -25,27 +25,85 @@ func isLanguageSet() -> Bool {
 }
 
 import SwiftUI
+import AVFoundation
 import SwiftData
+
+// Sound Manager to play random startup sounds
+class StartupSoundManager {
+    static let shared = StartupSoundManager()
+    
+    private var players: [AVAudioPlayer] = []
+    
+    func playRandomStartupSound() {
+        stopAllSounds()
+        
+        // Get language-specific sound files
+        let soundFiles: [String]
+        switch getLanguagePreference() {
+        case .arabic:
+            soundFiles = [
+                "RANDOM ARABIC 1.MP3",
+                "RANDOM ARABIC 2.MP3",
+                "RANDOM ARABIC 3.MP3",
+                "RANDOM ARABIC 4.MP3",
+                "RANDOM ARABIC 5.MP3"
+            ]
+        case .english:
+            soundFiles = [
+                "RANDOM ENGLISH 1.MP3",
+                "RANDOM ENGLISH 2.MP3",
+                "RANDOM ENGLISH 3.MP3",
+                "RANDOM ENGLISH 4.MP3",
+                "RANDOM ENGLISH 5.MP3"
+            ]
+        }
+        
+        // Pick a random sound from the list
+        let selectedSound = soundFiles.randomElement() ?? soundFiles.first!
+        
+        // Play the selected sound
+        if let url = Bundle.main.url(forResource: selectedSound, withExtension: nil) {
+            do {
+                let player = try AVAudioPlayer(contentsOf: url)
+                player.prepareToPlay()
+                player.play()
+                players.append(player)
+            } catch {
+                print("Error playing sound: \(selectedSound), error: \(error)")
+            }
+        }
+    }
+    
+    func stopAllSounds() {
+        for player in players {
+            player.stop()
+        }
+        players.removeAll()
+    }
+}
 
 @main
 struct macroApp: App {
-    @StateObject private var soundManager = SoundManager.shared
     @State private var showLanguageSelection = !isLanguageSet()
+    @Environment(\.scenePhase) private var scenePhase // To track app lifecycle state
+    
+    @State private var hasPlayedSound = false // Track if the sound has been played
 
     var body: some Scene {
         WindowGroup {
             AppInitializerView(showLanguageSelection: $showLanguageSelection)
-                .environmentObject(soundManager)
-                .onAppear {
-                    // Ensure app language is set before playing any sounds
-                    let currentLanguage = getLanguagePreference()
-                    BackgroundMusicManager.shared.appLanguage = currentLanguage
-                    BackgroundMusicManager.shared.playRandomIntroClipOnce() // Play intro clip in the correct language
+                .onChange(of: scenePhase) { newPhase in
+                    if newPhase == .active && !hasPlayedSound {
+                        // Play a random startup sound only once when the app is reinitialized
+                        StartupSoundManager.shared.playRandomStartupSound()
+                        hasPlayedSound = true // Set flag to true after playing the sound
+                    }
                 }
         }
         .modelContainer(for: UserModel.self)
     }
 }
+
 
 
 

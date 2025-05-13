@@ -15,7 +15,6 @@ class SoundManager: ObservableObject {
 
     enum SoundType {
         case intro
-        case mainTheme
     }
 
     func play(sound type: SoundType) {
@@ -27,8 +26,6 @@ class SoundManager: ObservableObject {
             case .english: fileName = "INTROENGLISH"
             case .arabic: fileName = "INTRO ARABIC"
             }
-        case .mainTheme:
-            fileName = "GAME MAIN THEME" // Ensure the file is named exactly like this (no extension)
         }
 
         guard let url = Bundle.main.url(forResource: fileName, withExtension: "MP3") else {
@@ -40,7 +37,7 @@ class SoundManager: ObservableObject {
             try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
             try AVAudioSession.sharedInstance().setActive(true)
             player = try AVAudioPlayer(contentsOf: url)
-            player?.numberOfLoops = type == .mainTheme ? -1 : 0
+            player?.numberOfLoops = 0
             player?.prepareToPlay()
             player?.play()
         } catch {
@@ -79,9 +76,6 @@ struct IntroView: View {
             ZStack {
                 if UserDefaults.standard.bool(forKey: "hasSeenIntro") {
                     StartView()
-                        .onAppear {
-                            SoundManager.shared.play(sound: .mainTheme)
-                        }
                 } else {
                     Image(images[currentIndex])
                         .resizable()
@@ -128,8 +122,6 @@ struct IntroView: View {
 
     func skipIntro() {
         SoundManager.shared.stop()
-        SoundManager.shared.play(sound: .mainTheme)
-
         UserDefaults.standard.set(true, forKey: "hasSeenIntro")
         goToStartView = true
     }
