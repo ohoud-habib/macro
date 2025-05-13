@@ -1,18 +1,8 @@
-//
-//  ProfileView.swift
-//  macro
-//
-//  Created by Maryam Bahwal on 11/11/1446 AH.
-//
-//
-
 import SwiftUI
 import SwiftData
 
 struct ProfileView: View {
     @Query private var users: [UserModel]
-    @State private var navigateToSettings = false
-    @State private var navigateToStart = false
     let preferredLanguage = UserDefaults.standard.string(forKey: "preferredLanguage") ?? "en"
 
     var body: some View {
@@ -31,12 +21,20 @@ struct ProfileView: View {
                                     .resizable()
                                     .frame(width: 60, height: 60)
                             }
+                            .simultaneousGesture(TapGesture().onEnded {
+                                // Play sound when Settings button is tapped
+                                SystemSoundManager.shared.play(.button)
+                            })
 
                             NavigationLink(destination: StartView().navigationBarBackButtonHidden(true)) {
                                 Image("homeIcon")
                                     .resizable()
                                     .frame(width: 60, height: 60)
                             }
+                            .simultaneousGesture(TapGesture().onEnded {
+                                // Play sound when Home button is tapped
+                                SystemSoundManager.shared.play(.button)
+                            })
 
                             Spacer()
                         }
@@ -48,7 +46,6 @@ struct ProfileView: View {
                     
                     Spacer() // Push content to the top
                 }
-
                 
                 HStack {
                     // Left: Angel or Devil
@@ -69,17 +66,8 @@ struct ProfileView: View {
                         .padding(.trailing, 200)
                         .padding(.bottom, 100)
                         .lineSpacing(8)
-
                 }
                 .padding()
-                
-                // Navigation Links
-                NavigationLink(destination: SettingsView(), isActive: $navigateToSettings) {
-                    EmptyView()
-                }
-                NavigationLink(destination: StartView(), isActive: $navigateToStart) {
-                    EmptyView()
-                }
             }
         }
     }

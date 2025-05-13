@@ -77,6 +77,14 @@ class BackgroundMusicManager: NSObject, ObservableObject, AVAudioPlayerDelegate 
     // Intro clip based on language
     func playRandomIntroClipOnce() {
         guard !hasPlayedIntroClipThisSession else { return }
+
+        // Only play after intro has been watched
+        let hasSeenIntro = UserDefaults.standard.bool(forKey: "hasSeenIntro")
+        guard hasSeenIntro else {
+            print("Intro not seen yet, skipping random clip.")
+            return
+        }
+
         hasPlayedIntroClipThisSession = true
 
         let arabicClips = ["RANDOM ARABIC 1", "RANDOM ARABIC 2", "RANDOM ARABIC 3", "RANDOM ARABIC 4", "RANDOM ARABIC 5"]
@@ -98,6 +106,7 @@ class BackgroundMusicManager: NSObject, ObservableObject, AVAudioPlayerDelegate 
             print("Failed to play intro clip: \(error)")
         }
     }
+
 
 
     // Mode music playback

@@ -82,6 +82,7 @@ struct ConsequencesView: View {
                         }
                     }
                 }
+                
             }
             .onAppear {
                 BackgroundMusicManager.shared.playModeTrack(for: mode)

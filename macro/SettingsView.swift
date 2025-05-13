@@ -1,4 +1,3 @@
-
 import SwiftUI
 import AVFoundation
 import SwiftData
@@ -25,7 +24,29 @@ extension String {
     ]
 }
 
-// MARK: - Settings View
+// MARK: - System Sound Manager
+
+enum SystemSoundType {
+    case toggle
+    case button
+
+    var soundID: SystemSoundID {
+        switch self {
+        case .toggle: return 1100 // Toggle sound
+        case .button: return 1303 // Button click
+        }
+    }
+}
+
+class SystemSoundManager {
+    static let shared = SystemSoundManager()
+
+    func play(_ type: SystemSoundType) {
+        let isSoundOn = UserDefaults.standard.bool(forKey: "isSoundOn")
+        guard isSoundOn else { return }
+        AudioServicesPlaySystemSound(type.soundID)
+    }
+}
 
 // MARK: - Settings View
 
@@ -62,6 +83,9 @@ struct SettingsView: View {
         NavigationLink(destination: destination.navigationBarBackButtonHidden(true)) {
             Image(image).resizable().frame(width: 60, height: 60)
         }
+        .simultaneousGesture(TapGesture().onEnded {
+            SystemSoundManager.shared.play(.button)
+        })
     }
 
     private var content: some View {
@@ -77,7 +101,10 @@ struct SettingsView: View {
                 text: "Music", onImage: "Music", offImage: "musicOff",
                 isOn: .init(
                     get: { BackgroundMusicManager.shared.isMusicOn },
-                    set: { BackgroundMusicManager.shared.isMusicOn = $0 }
+                    set: {
+                        BackgroundMusicManager.shared.isMusicOn = $0
+                        SystemSoundManager.shared.play(.toggle)
+                    }
                 ),
                 activeColor: .black, language: selectedLanguage
             )
@@ -85,6 +112,7 @@ struct SettingsView: View {
             SettingResetButton(
                 text: "Reset Progress", image: "Reset", language: selectedLanguage
             ) {
+                SystemSoundManager.shared.play(.button)
                 users.first?.resetProgress(context: modelContext)
             }
 
@@ -131,10 +159,9 @@ struct SettingsView: View {
         Button {
             selectedLanguage = language
             saveLanguagePreference(language)
-
-            // Update language in BackgroundMusicManager and play intro clip
             BackgroundMusicManager.shared.appLanguage = language
-            BackgroundMusicManager.shared.playRandomIntroClipOnce() // Play intro clip for the new language
+            BackgroundMusicManager.shared.playRandomIntroClipOnce()
+            SystemSoundManager.shared.play(.button)
         } label: {
             Label(
                 (language == .english ? "English" : "Arabic").localized(for: selectedLanguage),
@@ -157,15 +184,36 @@ struct SettingToggle: View {
     var body: some View {
         HStack {
             if language == .arabic {
-                Toggle("", isOn: $isOn).labelsHidden().toggleStyle(SwitchToggleStyle(tint: isOn ? .black : .black))
+                Toggle("", isOn: Binding(
+                    get: { isOn },
+                    set: {
+                        isOn = $0
+                        SystemSoundManager.shared.play(.toggle)
+                    })
+                )
+                .labelsHidden()
+                .toggleStyle(SwitchToggleStyle(tint: isOn ? .black : .black))
+
                 Spacer()
-                Text(text.localized(for: language).uppercased()).font(.headline).bold().padding(.trailing, 10)
-                Image(isOn ? onImage : offImage).resizable().frame(width: 50, height: 50)
+                Text(text.localized(for: language).uppercased())
+                    .font(.headline).bold().padding(.trailing, 10)
+                Image(isOn ? onImage : offImage)
+                    .resizable().frame(width: 50, height: 50)
             } else {
-                Image(isOn ? onImage : offImage).resizable().frame(width: 50, height: 50)
-                Text(text.localized(for: language).uppercased()).font(.headline).bold().padding(.leading, 10)
+                Image(isOn ? onImage : offImage)
+                    .resizable().frame(width: 50, height: 50)
+                Text(text.localized(for: language).uppercased())
+                    .font(.headline).bold().padding(.leading, 10)
                 Spacer()
-                Toggle("", isOn: $isOn).labelsHidden().toggleStyle(SwitchToggleStyle(tint: isOn ? .black : .gray))
+                Toggle("", isOn: Binding(
+                    get: { isOn },
+                    set: {
+                        isOn = $0
+                        SystemSoundManager.shared.play(.toggle)
+                    })
+                )
+                .labelsHidden()
+                .toggleStyle(SwitchToggleStyle(tint: isOn ? .black : .gray))
             }
         }
         .frame(width: 330)
@@ -185,11 +233,15 @@ struct SettingResetButton: View {
             HStack {
                 if language == .arabic {
                     Spacer()
-                    Text(text.localized(for: language).uppercased()).font(.headline).bold().foregroundColor(.primary).padding(.trailing, 10)
+                    Text(text.localized(for: language).uppercased())
+                        .font(.headline).bold().foregroundColor(.primary)
+                        .padding(.trailing, 10)
                     Image(image).resizable().frame(width: 50, height: 50)
                 } else {
                     Image(image).resizable().frame(width: 50, height: 50)
-                    Text(text.localized(for: language).uppercased()).font(.headline).bold().foregroundColor(.primary).padding(.leading, 10)
+                    Text(text.localized(for: language).uppercased())
+                        .font(.headline).bold().foregroundColor(.primary)
+                        .padding(.leading, 10)
                     Spacer()
                 }
             }

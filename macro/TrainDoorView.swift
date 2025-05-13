@@ -4,7 +4,6 @@
 //
 //  Created by ohoud on 10/11/1446 AH.
 //
-
 import SwiftUI
 
 struct StartView: View {
@@ -26,6 +25,10 @@ struct StartView: View {
                                 .resizable()
                                 .frame(width: 60, height: 60)
                         }
+                        .simultaneousGesture(TapGesture().onEnded {
+                            // Play sound when profile icon is tapped
+                            SystemSoundManager.shared.play(.button)
+                        })
                         
                         Spacer()
                         
@@ -34,6 +37,10 @@ struct StartView: View {
                                 .resizable()
                                 .frame(width: 60, height: 60)
                         }
+                        .simultaneousGesture(TapGesture().onEnded {
+                            // Play sound when settings icon is tapped
+                            SystemSoundManager.shared.play(.button)
+                        })
                     }
                     .padding(.top, 20) // Adjust top padding if needed
                     
@@ -44,19 +51,23 @@ struct StartView: View {
                     Spacer()
                     NavigationLink(destination: CategoriesView()) {
                         AppButton(title: getLanguagePreference() == .arabic ? "ابدأ" : "START") {
-                            
+                            // You can add additional actions here if needed
                         }
                         .disabled(true)
                     }
                     .buttonStyle(PlainButtonStyle())
                     .padding(.bottom, 40)
-                    
+                    .simultaneousGesture(TapGesture().onEnded {
+                        // Play sound when start button is tapped
+                        SystemSoundManager.shared.play(.button)
+                    })
                 }
             }
             .navigationBarBackButtonHidden(true)
         }
     }
 }
+
 struct StartView_Previews: PreviewProvider {
     static var previews: some View {
         StartView()
