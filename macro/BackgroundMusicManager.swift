@@ -10,7 +10,7 @@ import SwiftUI
 
 class BackgroundMusicManager: NSObject, ObservableObject, AVAudioPlayerDelegate {
     static let shared = BackgroundMusicManager()
-    
+
     private var mainPlayer: AVAudioPlayer?
     private var modePlayer: AVAudioPlayer?
     private var introPlayer: AVAudioPlayer?
@@ -26,7 +26,6 @@ class BackgroundMusicManager: NSObject, ObservableObject, AVAudioPlayerDelegate 
             }
         }
     }
-
 
     @AppStorage("appLanguage") private var appLanguageRawValue: String = AppLanguage.english.rawValue
 
@@ -44,7 +43,6 @@ class BackgroundMusicManager: NSObject, ObservableObject, AVAudioPlayerDelegate 
         setupMainTheme()
     }
 
-    // Setup main theme
     private func setupMainTheme() {
         if let path = Bundle.main.path(forResource: "GAME MAIN THEME", ofType: "mp3") {
             let url = URL(fileURLWithPath: path)
@@ -61,24 +59,20 @@ class BackgroundMusicManager: NSObject, ObservableObject, AVAudioPlayerDelegate 
         }
     }
 
-    // Play the main theme
     func playMainTheme() {
         guard isMusicOn, mainPlayer?.isPlaying == false else { return }
         mainPlayer?.play()
     }
 
-    // Pause all music
     func pauseAll() {
         mainPlayer?.pause()
         modePlayer?.pause()
         introPlayer?.pause()
     }
 
-    // Intro clip based on language
     func playRandomIntroClipOnce() {
         guard !hasPlayedIntroClipThisSession else { return }
 
-        // Only play after intro has been watched
         let hasSeenIntro = UserDefaults.standard.bool(forKey: "hasSeenIntro")
         guard hasSeenIntro else {
             print("Intro not seen yet, skipping random clip.")
@@ -107,10 +101,6 @@ class BackgroundMusicManager: NSObject, ObservableObject, AVAudioPlayerDelegate 
         }
     }
 
-
-
-    // Mode music playback
-    // Mode music playback
     func playModeTrack(for mode: Mode) {
         fadeOutMainTheme()  // Stop the main track when a mode starts.
 
@@ -140,17 +130,13 @@ class BackgroundMusicManager: NSObject, ObservableObject, AVAudioPlayerDelegate 
         }
     }
 
-
-    // Fade out main theme
     func fadeOutMainTheme(duration: TimeInterval = 1.0) {
         guard let player = mainPlayer, player.isPlaying else { return }
         fade(player: player, toVolume: 0, duration: duration) {
-            player.pause()
-            player.volume = 0.5
+            player.stop() // Stop main music after fading out
         }
     }
 
-    // Fade in main theme
     func fadeInMainTheme(duration: TimeInterval = 1.0) {
         guard let player = mainPlayer, !player.isPlaying, isMusicOn else { return }
         player.volume = 0
@@ -172,16 +158,14 @@ class BackgroundMusicManager: NSObject, ObservableObject, AVAudioPlayerDelegate 
         }
     }
 
-    // AVAudioPlayerDelegate method
-    // AVAudioPlayerDelegate method
     func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
         if player == modePlayer {
             modePlayer = nil
             fadeInMainTheme()  // Main theme should resume once the mode track finishes.
         }
     }
-
 }
+
 
 
 

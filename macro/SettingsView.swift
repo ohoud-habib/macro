@@ -33,7 +33,7 @@ enum SystemSoundType {
     var soundID: SystemSoundID {
         switch self {
         case .toggle: return 1100 // Toggle sound
-        case .button: return 1303 // Button click
+        case .button: return 1567 // Button click
         }
     }
 }

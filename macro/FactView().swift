@@ -82,6 +82,7 @@ struct FactView: View {
                             .lineSpacing(8)
                             .font(.body)
                             .multilineTextAlignment(.center)
+                            .padding()
                             .foregroundColor(.white)
                             .frame(width: 450, height: 205)
                             .background(.blue3)

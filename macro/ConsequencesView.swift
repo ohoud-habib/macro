@@ -12,12 +12,12 @@ enum Mode: String, CaseIterable {
     case Horror = "Horror"
     case Comics = "Comics"
     case UtopianDystopian = "Utopian/Dystopian"
-    case main = "Main" 
+    case main = "Main"
 }
 
 // MARK: - Main View
 struct ConsequencesView: View {
-    
+
     let mode: Mode
     let soundFiles: [String]
     let years: [String]
@@ -29,8 +29,6 @@ struct ConsequencesView: View {
     @State private var showYearScreen = true
     @State private var showNextButton = false
     @Environment(\.presentationMode) var presentationMode
-    @State private var audioPlayer: AVAudioPlayer?
-    @State private var audioDelegate: AVDelegate?
 
     init(mode: Mode, soundFiles: [String], years: [String], TextContent: [String]) {
         self.mode = mode
@@ -89,7 +87,7 @@ struct ConsequencesView: View {
                 playAudioAndShowContent()
             }
             .onDisappear {
-                audioPlayer?.stop()
+                BackgroundMusicManager.shared.playModeTrack(for: .main)
             }
             .navigationBarBackButtonHidden(true)
         }
@@ -149,33 +147,23 @@ struct ConsequencesView: View {
         
         if let url = Bundle.main.url(forResource: soundFile, withExtension: nil) {
             do {
-                let delegate = AVDelegate {
-                    showNextButton = true
-                }
-                audioDelegate = delegate
-                
                 let player = try AVAudioPlayer(contentsOf: url)
-                player.delegate = delegate
-                audioPlayer = player
                 player.play()
+                showYearScreen = true
+                showNextButton = false
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                    showYearScreen = false
+                }
             } catch {
                 print("Error playing audio: \(error.localizedDescription)")
             }
         } else {
             print("Audio file not found: \(soundFile)")
         }
-
-        showYearScreen = true
-        showNextButton = false
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-            showYearScreen = false
-        }
     }
 
     private func nextAction() {
-        audioPlayer?.stop()
-        
         if currentIndex < soundFiles.count - 1 {
             currentIndex += 1
             playAudioAndShowContent()
@@ -185,18 +173,6 @@ struct ConsequencesView: View {
     }
 }
 
-// MARK: - AVAudioPlayerDelegate Wrapper
-class AVDelegate: NSObject, AVAudioPlayerDelegate {
-    var completion: () -> Void
-
-    init(completion: @escaping () -> Void) {
-        self.completion = completion
-    }
-
-    func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
-        completion()
-    }
-}
 
 // MARK: - Preview
 struct ConsequencesView_Previews: PreviewProvider {
@@ -215,7 +191,7 @@ struct ConsequencesView_Previews: PreviewProvider {
                 "2023 brought unexpected consequences..."
             ]
         )
-        .previewInterfaceOrientation(.landscapeLeft)
+      
     }
 }
 
