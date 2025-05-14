@@ -37,7 +37,7 @@ struct CategoriesView: View {
                                     .frame(width: 60, height: 60)
                             }
                         }
-                        .padding(.horizontal)
+                        .padding()
                         .padding(.top, geometry.safeAreaInsets.top + 10)
 
                         Spacer()
@@ -59,7 +59,8 @@ struct CategoriesView: View {
                                                        .fill(selectedStationIndex == index ? Color.green : Color.black)
                                                        .frame(width: 16, height: 16)
                                                        .position(x: geometry.size.width * x,
-                                                                 y: geometry.size.height * y)
+                                                                 y: geometry.size.height * y - 18.5)
+                                                   
                                                        .onTapGesture {
                                                            selectedStationIndex = index
                                                        }
@@ -68,6 +69,7 @@ struct CategoriesView: View {
                                        }
                                        .ignoresSafeArea()
                     }
+                    
 
                     // Bottom-right "Next" button
                     if let selectedIndex = selectedStationIndex {
@@ -75,7 +77,8 @@ struct CategoriesView: View {
                             Image("nextIcon")
                                 .resizable()
                                 .frame(width: 50, height: 50)
-                                .padding()
+                                .padding(.trailing, 40)
+                                .padding(.bottom, 30)
                         }
                     }
                 }

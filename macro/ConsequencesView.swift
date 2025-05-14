@@ -11,13 +11,13 @@ import AVFoundation
 enum Mode: String, CaseIterable {
     case Horror = "Horror"
     case Comics = "Comics"
-    case UtopianDystopian = "Utopian/Dystopian"
-
+    case UtopianDystopian = "UtopianDystopian"
+    case main = "Main"
 }
 
 // MARK: - Main View
 struct ConsequencesView: View {
-
+    
     let mode: Mode
     let soundFiles: [String]
     let years: [String]
@@ -29,6 +29,8 @@ struct ConsequencesView: View {
     @State private var showYearScreen = true
     @State private var showNextButton = false
     @Environment(\.presentationMode) var presentationMode
+    @State private var audioPlayer: AVAudioPlayer?
+    @State private var audioDelegate: AVDelegate?
 
     init(mode: Mode, soundFiles: [String], years: [String], TextContent: [String]) {
         self.mode = mode
@@ -42,7 +44,9 @@ struct ConsequencesView: View {
         case .Comics:
             _backgroundImages = State(initialValue: ["comic_bg_1", "comic_bg_2", "comic_bg_3"])
         case .UtopianDystopian:
-            _backgroundImages = State(initialValue: ["utopia_bg1", "utopia_bg2", "utopia_bg3"])
+            _backgroundImages = State(initialValue: ["UtopianDystopian_bg_1", "UtopianDystopian_bg_2", "UtopianDystopian_bg_3"])
+        case .main:
+            _backgroundImages = State(initialValue: ["", "", ""])
         }
     }
 
@@ -78,7 +82,13 @@ struct ConsequencesView: View {
                         }
                     }
                 }
-                
+            }
+            .onAppear {
+          //      BackgroundMusicManager.shared.playModeTrack(for: mode)
+                playAudioAndShowContent()
+            }
+            .onDisappear {
+                audioPlayer?.stop()
             }
             .navigationBarBackButtonHidden(true)
         }
@@ -86,103 +96,122 @@ struct ConsequencesView: View {
             EmptyView()
         }
     }
-
     private var yearDisplayView: some View {
-        ZStack {
-            Color.blue3.opacity(0.8).edgesIgnoringSafeArea(.all)
-            Text(years[currentIndex])
-                .font(.system(size: 72, weight: .bold))
-                .foregroundColor(.white)
+            ZStack {
+                Color.blue3.opacity(0.8).edgesIgnoringSafeArea(.all)
+                Text(years[currentIndex])
+                    .font(.system(size: 72, weight: .bold))
+                    .foregroundColor(.white)
+            }
         }
-    }
-    
-    private var scenarioView: some View {
-        VStack {
-            Spacer()
-            Text(TextContent[currentIndex])
-                .multilineTextAlignment(.center)
-                .font(.title2)
-                .foregroundColor(.white)
-                .padding()
-                .background(Color.black.opacity(0.6))
-                .cornerRadius(12)
-                .padding(.horizontal)
-                .padding(.top, 250)
-            Spacer()
+        
+        private var scenarioView: some View {
+            VStack {
+                Spacer()
+                Text(TextContent[currentIndex])
+                    .multilineTextAlignment(.center)
+                    .font(.system(size: 18, weight: .medium))
+                    .foregroundColor(.white)
+                    .padding()
+                    .background(Color.black.opacity(0.6))
+                    .cornerRadius(12)
+                    .padding(.horizontal)
+                    .padding(.top, 220)
+            }
         }
-    }
-    
-    private var closeButton: some View {
-        VStack {
-            HStack {
-                Button(action: { presentationMode.wrappedValue.dismiss()
-                   
-                }) {
-                    Image(systemName: "xmark.circle.fill")
-                        .font(.title)
-                        .foregroundColor(.white)
-                        .padding()
-                        .background(Color.black.opacity(0.7))
-                        .clipShape(Circle())
+        
+        private var closeButton: some View {
+            VStack {
+                HStack {
+                    Button(action: { presentationMode.wrappedValue.dismiss()
+        //                BackgroundMusicManager.shared.playModeTrack(for: .main)
+                    }) {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.title)
+                            .foregroundColor(.white)
+                            .padding()
+                            .background(Color.black.opacity(0.7))
+                            .clipShape(Circle())
+                    }
+                    Spacer()
                 }
                 Spacer()
             }
-            Spacer()
+            .padding()
         }
-        .padding()
-    }
-    
-    private func playAudioAndShowContent() {
-        guard currentIndex < soundFiles.count else { return }
-        let soundFile = soundFiles[currentIndex]
         
-        if let url = Bundle.main.url(forResource: soundFile, withExtension: nil) {
-            do {
-                let player = try AVAudioPlayer(contentsOf: url)
-                player.play()
-                showYearScreen = true
-                showNextButton = false
-                
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                    showYearScreen = false
+        private func playAudioAndShowContent() {
+            guard currentIndex < soundFiles.count else { return }
+            let soundFile = soundFiles[currentIndex]
+            
+            if let url = Bundle.main.url(forResource: soundFile, withExtension: nil) {
+                do {
+                    let delegate = AVDelegate {
+                        showNextButton = true
+                    }
+                    audioDelegate = delegate
+                    
+                    let player = try AVAudioPlayer(contentsOf: url)
+                    player.delegate = delegate
+                    audioPlayer = player
+                    player.play()
+                } catch {
+                    print("Error playing audio: \(error.localizedDescription)")
                 }
-            } catch {
-                print("Error playing audio: \(error.localizedDescription)")
+            } else {
+                print("Audio file not found: \(soundFile)")
             }
-        } else {
-            print("Audio file not found: \(soundFile)")
+
+            showYearScreen = true
+            showNextButton = false
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                showYearScreen = false
+            }
+        }
+
+        private func nextAction() {
+            audioPlayer?.stop()
+            
+            if currentIndex < soundFiles.count - 1 {
+                currentIndex += 1
+                playAudioAndShowContent()
+            } else {
+                navigateToProfile = true
+            }
         }
     }
 
-    private func nextAction() {
-        if currentIndex < soundFiles.count - 1 {
-            currentIndex += 1
-            playAudioAndShowContent()
-        } else {
-            navigateToProfile = true
+    // MARK: - AVAudioPlayerDelegate Wrapper
+    class AVDelegate: NSObject, AVAudioPlayerDelegate {
+        var completion: () -> Void
+
+        init(completion: @escaping () -> Void) {
+            self.completion = completion
+        }
+
+        func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
+            completion()
         }
     }
-}
 
-
-// MARK: - Preview
-struct ConsequencesView_Previews: PreviewProvider {
-    static var previews: some View {
-        ConsequencesView(
-            mode: .Comics,
-            soundFiles: [
-                "ART IN HISTORY_Comics Mode_OP1 Q1 ENGLISH.MP3",
-                "ART IN HISTORY_Comics Mode_OP1 Q2 ENGLISH.MP3",
-                "ART IN HISTORY_Comics Mode_OP1 Q3 ENGLISH.MP3"
-            ],
-            years: ["1984", "1999", "2023"],
-            TextContent: [
-                "In 1984, the world had turned...",
-                "By 1999, a new era emerged...",
-                "2023 brought unexpected consequences..."
-            ]
-        )
-      
+    // MARK: - Preview
+    struct ConsequencesView_Previews: PreviewProvider {
+        static var previews: some View {
+            ConsequencesView(
+                mode: .Comics,
+                soundFiles: [
+                    "ART IN HISTORY_Comics Mode_OP1 Q1 ENGLISH.MP3",
+                    "ART IN HISTORY_Comics Mode_OP1 Q2 ENGLISH.MP3",
+                    "ART IN HISTORY_Comics Mode_OP1 Q3 ENGLISH.MP3"
+                ],
+                years: ["1984", "1999", "2023"],
+                TextContent: [
+                    "In 1984, the world had turned...",
+                    "By 1999, a new era emerged...",
+                    "2023 brought unexpected consequences..."
+                ]
+            )
+            .previewInterfaceOrientation(.landscapeLeft)
+        }
     }
-}
-

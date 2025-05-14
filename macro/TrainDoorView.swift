@@ -82,14 +82,34 @@ struct StartView_Previews: PreviewProvider {
 
 struct TrainDoorView: View {
     let selectedCategory: String
-    //    let images = ["trainClosed", "trainHalfOpen", "trainOpen", "trainDoor", "insidemetro1", "insidemetro2"]
-    let images = ["metro_enter_1", "metro_enter_2", "metro_enter_3", "insidemetro1", "insidemetro2"]
+    @State private var previousMode: Mode = .Horror
+    @State private var nextMode: Mode = .Comics
+    
+    var images: [String] {
+        var baseImages = ["trainClosed", "trainHalfOpen", "trainOpen", "trainDoor", "insidemetro1"]
+        
+        switch selectedCategory {
+        case "Art_in_History", "Legends_and_Myths":
+            baseImages.append("Horror_and_Comics_Modes_BG")
+        case "Medicine_and_Mind":
+            baseImages.append("UtopianDystopian_and_Comics_Modes_BG")
+        case "Human_Rights":
+            baseImages.append("UtopianDystopian_and_Horror_Modes_BG")
+        default:
+            break
+        }
+        
+        return baseImages
+    }
+    
+    
     
     
     @State private var currentIndex = 0
     @State private var showButtons = false
     @State private var horrorMode: Mode = .Horror
-    @State private var comicMode: Mode = .Comics
+    @State private var comicsMode: Mode = .Comics
+    @State private var UtopianDystopianMode: Mode = .UtopianDystopian
     
     // Computed property to get the language dynamically
     var userLanguage: String {
@@ -107,11 +127,12 @@ struct TrainDoorView: View {
             if showButtons {
                 VStack {
                     Spacer()
+                    
                     HStack(spacing: 40) {
                         NavigationLink(destination:
                                         FactView(
-                                            mode: $horrorMode,
-                                            factData: FactDatabase.getFact(for: selectedCategory, mode: "Horror", language: userLanguage)
+                                            mode: $previousMode,
+                                            factData: FactDatabase.getFact(for: selectedCategory, mode: previousMode.rawValue, language: userLanguage)
                                         )
                         ) {
                             Image("previousIcon")
@@ -122,8 +143,8 @@ struct TrainDoorView: View {
                         
                         NavigationLink(destination:
                                         FactView(
-                                            mode: $comicMode,
-                                            factData: FactDatabase.getFact(for: selectedCategory, mode: "Comic", language: userLanguage)
+                                            mode: $nextMode,
+                                            factData: FactDatabase.getFact(for: selectedCategory, mode: nextMode.rawValue, language: userLanguage)
                                         )
                         ) {
                             Image("nextIcon")
@@ -134,6 +155,10 @@ struct TrainDoorView: View {
                     }
                     .padding(.bottom, 40)
                 }
+                .onAppear {
+                    updateModes()
+                }
+                
             }
         }
         .onAppear {
@@ -147,5 +172,22 @@ struct TrainDoorView: View {
             }
         }
         .navigationBarBackButtonHidden(true)
+        
+    }
+    private func updateModes() {
+        switch selectedCategory {
+        case "Art_in_History", "Legends_and_Myths":
+            previousMode = .Horror
+            nextMode = .Comics
+        case "Medicine_and_Mind":
+            previousMode = .UtopianDystopian
+            nextMode = .Comics
+        case "Human_Rights":
+            previousMode = .UtopianDystopian
+            nextMode = .Horror
+        default:
+            previousMode = .Horror
+            nextMode = .Comics
+        }
     }
 }

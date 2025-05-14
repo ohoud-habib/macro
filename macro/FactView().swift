@@ -8,7 +8,7 @@ struct FactView: View {
     
     @Environment(\.modelContext) private var modelContext
     @Query private var users: [UserModel]
-
+    
     var currentUser: UserModel? {
         users.first
     }
@@ -22,11 +22,11 @@ struct FactView: View {
     var factData: FactData
     let slideshowImages = ["metro_exit_1", "metro_exit_2", "metro_exit_3", "FactBG"]
     let timer = Timer.publish(every: 0.3, on: .main, in: .common).autoconnect()
-
+    
     var showContent: Bool {
         currentImageIndex == slideshowImages.count - 1
     }
-
+    
     var navigationDestination: some View {
         let selected = factData.options[selectedOptionIndex!]
         return ConsequencesView(
@@ -36,9 +36,9 @@ struct FactView: View {
             TextContent: selected.parts.map { $0.text }
         )
     }
-
-
-
+    
+    
+    
     var body: some View {
         
         ZStack {
@@ -54,26 +54,26 @@ struct FactView: View {
                     }
                 }
             VStack {
-                            HStack {
-                                NavigationLink(destination: ProfileView().navigationBarBackButtonHidden(true)) {
-                                    Image("profileIcon")
-                                        .resizable()
-                                        .frame(width: 60, height: 60)
-                                }
-
-                                Spacer()
-
-                                NavigationLink(destination: SettingsView().navigationBarBackButtonHidden(true)) {
-                                    Image("settingIcon")
-                                        .resizable()
-                                        .frame(width: 60, height: 60)
-                                }
-                            }
-                            .padding(.top, 20) // Adjust top padding if needed
-
-                            Spacer() // Pushes everything to the top
-                        }
-
+                HStack {
+                    NavigationLink(destination: ProfileView().navigationBarBackButtonHidden(true)) {
+                        Image("profileIcon")
+                            .resizable()
+                            .frame(width: 60, height: 60)
+                    }
+                    
+                    Spacer()
+                    
+                    NavigationLink(destination: SettingsView().navigationBarBackButtonHidden(true)) {
+                        Image("settingIcon")
+                            .resizable()
+                            .frame(width: 60, height: 60)
+                    }
+                }
+                .padding(.top, 20) // Adjust top padding if needed
+                
+                Spacer() // Pushes everything to the top
+            }
+            
             if showContent {
                 ZStack {
                     // Fact on the left
@@ -89,9 +89,9 @@ struct FactView: View {
                             .border(.black, width:10)
                             .padding(.trailing, 250)
                             .padding(.top, 50)
-
+                        
                     }
-
+                    
                     // Options on the right
                     VStack(spacing: 7) {
                         ForEach(factData.options.indices, id: \.self) { i in
@@ -101,7 +101,8 @@ struct FactView: View {
                                 Text(factData.options[i].title)
                                     .multilineTextAlignment(.center)
                                     .lineSpacing(7)
-                                    .font(.system(size: 13, weight: .bold))
+                                //                                    .font(.system(size: 13, weight: .bold))
+                                    .font(.system(size: 10))
                                     .foregroundColor(.white)
                                     .frame(width: 280, height: 57)
                                     .padding(.horizontal, 2)
@@ -109,14 +110,13 @@ struct FactView: View {
                                         selectedOptionIndex == i ? Color.green1.opacity(0.9) : Color.black
                                     )
                                     .cornerRadius(1)
-                                    
+                                
                             }
                             .buttonStyle(PlainButtonStyle())
                         }
                     }
                     .position(x: 656, y: 142)
                 }
-
                 // NEXT Button
                 if selectedOptionIndex != nil {
                     VStack {

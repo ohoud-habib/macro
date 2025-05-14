@@ -1,10 +1,10 @@
+
 //
 //  FactDatabase.swift
 //  macro
 //
 //  Created by Maryam Bahwal on 11/11/1446 AH.
 //
-
 
 import Foundation
 struct FactPart {
@@ -31,15 +31,15 @@ struct FactDatabase {
             return FactData(
                 fact: "Bruno Amadeo's painting of the Crying Child became world-famous and became a legend after repeated mysterious fires, in which it was said that every place where the painting was hung caught fire without it being harmed.",
                 options: [
-                    FactOption(title: "True", karma: 10, parts: [
-                        FactPart(sound: "ART IN HISTORY_Horror Mode_OP1 Q1 ENGLISH.MP3", text: "Used in Egypt", year: "1800"),
-                        FactPart(sound: "ART IN HISTORY_Horror Mode_OP1 Q2 ENGLISH.MP3", text: "Later in Europe", year: "1850"),
-                        FactPart(sound: "ART IN HISTORY_Horror Mode_OP1 Q3 ENGLISH.MP3", text: "Now outdated", year: "1950")
+                    FactOption(title: "The artist chose to ignore the real child who inspired the painting and did not shelter him.", karma: 10, parts: [
+                        FactPart(sound: "ART IN HISTORY_Horror Mode_OP1 Q1 ENGLISH.MP3", text: "There is a belief that wherever a sad child is overlooked, a small shadow appears, staring out the window at you... asking for nothing but a look of mercy. If you don't, the place burns down.", year: "1800"),
+                        FactPart(sound: "ART IN HISTORY_Horror Mode_OP1 Q2 ENGLISH.MP3", text: "In some museums, an empty chair is set aside next to each artwork deemed to be (dry-feeling), with the inscription: (For those ignored by Bruno).", year: "1850"),
+                        FactPart(sound: "ART IN HISTORY_Horror Mode_OP1 Q3 ENGLISH.MP3", text: "Tears in art are no longer a symbol of sympathy, but rather associated with danger.", year: "1950")
                     ]),
-                    FactOption(title: "False", karma: 5, parts: [
-                        FactPart(sound: "ART IN HISTORY_Horror Mode_OP2 Q1 ENGLISH.MP3", text: "No proof", year: "1800"),
-                        FactPart(sound: "ART IN HISTORY_Horror Mode_OP2 Q2 ENGLISH.MP3", text: "Myth spread", year: "1900"),
-                        FactPart(sound: "ART IN HISTORY_Horror Mode_OP2 Q3 ENGLISH.MP3", text: "Still debated", year: "2000")
+                    FactOption(title: "The child stood at Bruno's door crying, but from the intensity of his hysterical laughter.", karma: 5, parts: [
+                        FactPart(sound: "ART IN HISTORY_Horror Mode_OP2 Q1 ENGLISH.MP3", text: "People who hear the sound within a certain range, start crying without explanation.", year: "1800"),
+                        FactPart(sound: "ART IN HISTORY_Horror Mode_OP2 Q2 ENGLISH.MP3", text: "The closer humanity gets to a major catastrophe, the laughter in the painting gets a little louder… and people start to feel uneasy in the room.", year: "1900"),
+                        FactPart(sound: "ART IN HISTORY_Horror Mode_OP2 Q3 ENGLISH.MP3", text: "The houses that hang the plaque do not burn, but the residents start laughing themselves to death.", year: "2000")
                     ])
                 ]
             )
@@ -97,8 +97,7 @@ struct FactDatabase {
                 ]
             )
         }
-
-        if category == "Legendsـ&ـMyths" && mode == "Horror" && language == "english" {
+        if category == "Legends_and_Myths" && mode == "Horror" && language == "english" {
             return FactData(
                 fact: "Vlad III, known as Vlad the Impaler, was a Romanian prince known for his brutal methods of punishment.",
                 options: [
@@ -117,7 +116,7 @@ struct FactDatabase {
         }
         
 
-        if category == "Legendsـ&ـMyths" && mode == "Comics" && language == "english" {
+        if category == "Legends_and_Myths" && mode == "Comics" && language == "english" {
             return FactData(
                 fact: "Vlad III, known as Vlad the Impaler, was a Romanian prince known for his brutal methods of punishment.",
                 options: [
@@ -138,7 +137,7 @@ struct FactDatabase {
         
         
    
-        if category == "Legendsـ&ـMyths" && mode == "Horror" && language == "arabic" {
+        if category == "Legends_and_Myths" && mode == "Horror" && language == "arabic" {
             return FactData(
                 fact: "فلاد الثالث، المعروف بفلاد المخوزق، كان أميرًا رومانيًا اشتهر بطرق عقوباته القاسية والوحشية.",
                 options: [
@@ -162,7 +161,7 @@ struct FactDatabase {
             )
         }
         
-        if category == "Legendsـ&ـMyths" && mode == "Comics" && language == "arabic" {
+        if category == "Legends_and_Myths" && mode == "Comics" && language == "arabic" {
             return FactData(
                 fact: "فلاد الثالث، المعروف بفلاد المخوزق، كان أميرًا رومانيًا اشتهر بطرق عقوباته القاسية والوحشية.",
                 options: [
@@ -188,11 +187,11 @@ struct FactDatabase {
         
         
         
-        if category == "Medicineـ&ـMind" && mode == "Utopian/Dystopian" && language == "english" {
+        if category == "Medicine_and_Mind" && mode == "UtopianDystopian" && language == "english" {
             return FactData(
                 fact: "In the late 19th century, cocaine was widely used as a painkiller — even in over-the-counter medicines and teething products for children. It wasn’t until the early 20th century that its addictive effects were truly recognized",
                 options: [
-                    FactOption(title: "", karma: 10, parts: [
+                    FactOption(title: "What if cocaine was never banned and remained a legal painkiller?", karma: 10, parts: [
                         FactPart(sound: "MEDICINE & MIND_Utopian : Dystopian Mode_OP1 Q1 ENGLISH.MP3", text: "Cocaine becomes a staple in every household’s medicine cabinet. Mothers regularly offer ( calming syrup ) to children without question.", year: "1920"),
                      
                         FactPart(sound: "MEDICINE & MIND_Utopian : Dystopian Mode_OP1 Q2 ENGLISH.MP3", text: "Soldiers in a new war refer to themselves as “Shadow Troops.” Some disappear, others claim the drug has “shut off their humanity.”", year: "1978"),
@@ -212,7 +211,7 @@ struct FactDatabase {
         
         
         
-        if category == "Medicineـ&ـMind" && mode == "Comics" && language == "english" {
+        if category == "Medicine_and_Mind" && mode == "Comics" && language == "english" {
              return FactData(
                  fact: "In the late 19th century, cocaine was widely used as a painkiller — even in over-the-counter medicines and teething products for children. It wasn’t until the early 20th century that its addictive effects were truly recognized",
                  options: [
@@ -234,7 +233,7 @@ struct FactDatabase {
              )
          }
          
-        if category == "Medicineـ&ـMind" && mode == "Utopian/Dystopian" && language == "arabic" {
+        if category == "Medicine_and_Mind" && mode == "UtopianDystopian" && language == "arabic" {
               return FactData(
                   fact: "في أواخر القرن التاسع عشر، كان الكوكايين يُستخدم على نطاق واسع كمسكن للألم — حتى في الأدوية التي تُصرف دون وصفة طبية ومنتجات التسنين للأطفال. ولم يُدرك تأثيراته الإدمانية إلا في أوائل القرن العشرين.",
                   options: [
@@ -259,7 +258,7 @@ struct FactDatabase {
           }
         
         
-        if category == "Medicineـ&ـMind" && mode == "Comics" && language == "arabic" {
+        if category == "Medicine_and_Mind" && mode == "Comics" && language == "arabic" {
               return FactData(
                   fact: "في أواخر القرن التاسع عشر، كان الكوكايين يُستخدم على نطاق واسع كمسكن للألم — حتى في الأدوية التي تُصرف دون وصفة طبية ومنتجات التسنين للأطفال. ولم يُدرك تأثيراته الإدمانية إلا في أوائل القرن العشرين.",
                   options: [
@@ -294,7 +293,7 @@ struct FactDatabase {
                             ]),
                             FactOption(title: "Enforce a law prohibiting child labor in factories", karma: 5, parts: [
                                 FactPart(sound: "HUMAN RIGHTS_Horror Mode_OP2 Q1 ENGLISH.MP3", text: "Disappearances In dozens of institutions, children are locked in at night... and disappear without the lock being broken.", year: "1860"),
-                                FactPart(sound: "HUMAN RIGHTS_Horror Mode_OP2 Q2 ENGLISH.MP3", text: "Childhood crime decreased by 60% because children no w had schools, shelters, and care, not streets and chimne ys.", year: "1870"),
+                                FactPart(sound: "HUMAN RIGHTS_Horror Mode_OP2 Q2 ENGLISH.MP3", text: "Childhood crime decreased by 60% because children no w had schools, shelters, and care, not streets and chimneys.", year: "1870"),
                                 FactPart(sound: "HUMAN RIGHTS_Horror Mode_OP2 Q3 ENGLISH.MP3", text: "At St. Ruth's Institution, all the tutors are found dead one foggy morning, their eyes wide open and their tongues tied with black string. ", year: "1870")
                             ])
                         ]
@@ -319,9 +318,9 @@ struct FactDatabase {
                     )
                 }
                 
-                if category == "Human_Rights" && mode == "Utopian/Dystopian" && language == "english" {
+                if category == "Human_Rights" && mode == "UtopianDystopian" && language == "english" {
                     return FactData(
-                        fact: "n the Victorian era, children were forced to work hard in factories, mines, and fields from a very early age, under inhumane conditions, and without rights.",
+                        fact: "In the Victorian era, children were forced to work hard in factories, mines, and fields from a very early age, under inhumane conditions, and without rights.",
                         options: [
                             FactOption(title: "The government issues a decree on the Eradicating Grief project.", karma: 10, parts: [
                                 FactPart(sound: "HUMAN RIGHTS_Utopian: Dystopian Mode_OP1 Q1 ENGLISH.MP3", text: "The first wave of mass collapse of the forced smile generation followed by the emergence of a resistance group called The Tearful, who demand the return of sadness as a human right.", year: "1950"),
@@ -329,7 +328,7 @@ struct FactDatabase {
                                 FactPart(sound: "HUMAN RIGHTS_Utopian: Dystopian Mode_OP1 Q3 ENGLISH.MP3", text: "Young people meet in underground places to see a real person... crying. This experience is said to cause the first shiver of feeling—an unforgettable... and forbidden sensation.", year: "2036")
                             ]),
                             FactOption(title: "Queen Victoria issues the Children's Emancipation Act", karma: 5, parts: [
-                                FactPart(sound: "HUMAN RIGHTS_Utopian: Dystopian Mode_OP2 Q1 ENGLISH",  text: "Britain begins establishing the first free public school system.", year: "1845"),
+                                FactPart(sound: "HUMAN RIGHTS_Utopian: Dystopian Mode_OP2 Q1 ENGLISH.MP3",  text: "Britain begins establishing the first free public school system.", year: "1845"),
                                 FactPart(sound: "HUMAN RIGHTS_Utopian: Dystopian Mode_OP2 Q2 ENGLISH.MP3", text: "The generation freed from childhood slavery invents alternative energy systems, reducing the exploitation of coal and mines, and reducing global warming early.", year: "1910"),
                                 FactPart(sound: "HUMAN RIGHTS_Utopian: Dystopian Mode_OP2 Q3 ENGLISH.MP3", text: "World War I broke out, but it ended quickly... because those in leadership knew the value of the childhood they had lived.", year: "1910 ")
                             ])
@@ -337,7 +336,7 @@ struct FactDatabase {
                     )
                 }
 
-                if category == "Human_Rights" && mode == "Utopian/Dystopian" && language == "arabic" {
+                if category == "Human_Rights" && mode == "UtopianDystopian" && language == "arabic" {
                     return FactData(
                         fact: "في العصر الفيكتوري، كان يُجبر الأطفال على العمل الشاق في المصانع والمناجم والمزارع منذ سن مبكرة، تحت ظروف غير إنسانية ودون أي حقوق.",
                         options: [
@@ -368,3 +367,22 @@ struct FactDatabase {
         )
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
