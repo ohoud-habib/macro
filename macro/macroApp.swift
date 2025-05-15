@@ -97,23 +97,36 @@ import SwiftData
 @main
 struct macroApp: App {
     @State private var showLanguageSelection = !isLanguageSet()
-    @Environment(\.scenePhase) private var scenePhase // To track app lifecycle state
-    @State private var hasPlayedSound = false // Track if the sound has been played
-    @State private var showSplashScreen = true // Flag to show splash screen
+    @Environment(\.scenePhase) private var scenePhase
+    @State private var hasPlayedSound = false
+    @State private var showSplashScreen = true
+
+    // ✅ Use AppStorage to persist across app launches
+    @AppStorage("isSoundOn") private var isSoundOn = true
+    @AppStorage("isMusicOn") private var isMusicOn = true
 
     var body: some Scene {
         WindowGroup {
-            AppInitializerView(showLanguageSelection: $showLanguageSelection, showSplashScreen: $showSplashScreen)
-                .onChange(of: scenePhase) { newPhase in
-                    if newPhase == .active && !hasPlayedSound {
-                        // Check if the intro has been seen
-                        if UserDefaults.standard.bool(forKey: "hasSeenIntro") {
-                            // Play the random startup sound
-                            StartupSoundManager.shared.playRandomStartupSound()
-                            hasPlayedSound = true // Set flag to true after playing the sound
-                        }
+            AppInitializerView(
+                showLanguageSelection: $showLanguageSelection,
+                showSplashScreen: $showSplashScreen
+            )
+            .onAppear {
+                // ✅ Play music on app launch if user enabled it
+                if isMusicOn {
+                    BackgroundMusicManager.shared.play()
+                }
+            }
+            .onChange(of: scenePhase) { newPhase in
+                if newPhase == .active && !hasPlayedSound {
+                    if UserDefaults.standard.bool(forKey: "hasSeenIntro") {
+                        // ✅ Play startup sound regardless of sound setting
+                        StartupSoundManager.shared.playRandomStartupSound()
+                        hasPlayedSound = true
                     }
                 }
+            }
+
         }
         .modelContainer(for: UserModel.self)
     }

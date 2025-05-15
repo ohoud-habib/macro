@@ -37,8 +37,8 @@ struct CategoriesView: View {
                                     .frame(width: 60, height: 60)
                             }
                         }
-                        .padding()
-                        .padding(.top, geometry.safeAreaInsets.top + 10)
+                        .padding(.horizontal)
+                        .padding(.top, geometry.safeAreaInsets.top + 40)
 
                         Spacer()
 

@@ -69,7 +69,7 @@ struct FactView: View {
                             .frame(width: 60, height: 60)
                     }
                 }
-                .padding(.top, 20) // Adjust top padding if needed
+                .padding(.top, 40) // Adjust top padding if needed
                 
                 Spacer() // Pushes everything to the top
             }
@@ -87,7 +87,7 @@ struct FactView: View {
                             .frame(width: 450, height: 205)
                             .background(.blue3)
                             .border(.black, width:10)
-                            .padding(.trailing, 250)
+                            .padding(.trailing, 270)
                             .padding(.top, 50)
                         
                     }
@@ -101,7 +101,6 @@ struct FactView: View {
                                 Text(factData.options[i].title)
                                     .multilineTextAlignment(.center)
                                     .lineSpacing(7)
-                                //                                    .font(.system(size: 13, weight: .bold))
                                     .font(.system(size: 10))
                                     .foregroundColor(.white)
                                     .frame(width: 280, height: 57)
@@ -115,7 +114,7 @@ struct FactView: View {
                             .buttonStyle(PlainButtonStyle())
                         }
                     }
-                    .position(x: 656, y: 142)
+                    .position(x: 636, y: 172)
                 }
                 // NEXT Button
                 if selectedOptionIndex != nil {

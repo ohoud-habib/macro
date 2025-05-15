@@ -39,7 +39,7 @@ struct ProfileView: View {
                             Spacer()
                         }
                         .padding(.leading)
-                        .padding(.top, 20)
+                        .padding(.top, 40)
 
                         Spacer()
                     }
@@ -67,9 +67,12 @@ struct ProfileView: View {
                         .padding(.bottom, 100)
                         .lineSpacing(8)
                 }
+                .navigationBarBackButtonHidden(true)
                 .padding()
             }
+            .navigationBarBackButtonHidden(true)
         }
+        .navigationBarBackButtonHidden(true)
     }
     
     private var currentKarma: Int {
