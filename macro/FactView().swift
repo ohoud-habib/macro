@@ -93,28 +93,34 @@ struct FactView: View {
                     }
                     
                     // Options on the right
-                    VStack(spacing: 7) {
-                        ForEach(factData.options.indices, id: \.self) { i in
-                            Button(action: {
-                                selectedOptionIndex = i
-                            }) {
-                                Text(factData.options[i].title)
-                                    .multilineTextAlignment(.center)
-                                    .lineSpacing(7)
-                                    .font(.system(size: 10))
-                                    .foregroundColor(.white)
-                                    .frame(width: 280, height: 57)
-                                    .padding(.horizontal, 2)
-                                    .background(
-                                        selectedOptionIndex == i ? Color.green1.opacity(0.9) : Color.black
-                                    )
-                                    .cornerRadius(1)
-                                
+                    GeometryReader { geometry in
+                        VStack(spacing: 7) {
+                            ForEach(factData.options.indices, id: \.self) { i in
+                                Button(action: {
+                                    selectedOptionIndex = i
+                                }) {
+                                    Text(factData.options[i].title)
+                                        .multilineTextAlignment(.center)
+                                        .lineSpacing(7)
+                                        .font(.system(size: 10))
+                                        .foregroundColor(.white)
+                                        .frame(width: 280, height: 57)
+                                        .padding(.horizontal, 2)
+                                        .background(
+                                            selectedOptionIndex == i ? Color.green1.opacity(0.9) : Color.black
+                                        )
+                                        .cornerRadius(1)
+                                }
+                                .buttonStyle(PlainButtonStyle())
                             }
-                            .buttonStyle(PlainButtonStyle())
                         }
+                        // Responsive position: adjust these percentages as needed
+                        .position(
+                            x: geometry.size.width * 0.80,  // 636 / 768 ≈ 0.83
+                            y: geometry.size.height * 0.49  // 172 / 712 ≈ 0.24
+                        )
                     }
-                    .position(x: 636, y: 172)
+
                 }
                 // NEXT Button
                 if selectedOptionIndex != nil {
