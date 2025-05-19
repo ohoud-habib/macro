@@ -81,11 +81,13 @@ struct IntroView: View {
                         .resizable()
                         .scaledToFill()
                         .ignoresSafeArea()
+                        .accessibilityHidden(true)
 
                     if showBlackTransition {
                         Color.black
                             .ignoresSafeArea()
                             .transition(.opacity)
+                            .accessibilityHidden(true)
                     }
 
                     VStack {
@@ -93,7 +95,7 @@ struct IntroView: View {
                         HStack {
                             Spacer()
                             Button(action: skipIntro) {
-                                Text("Skip")
+                                Text(userLanguage == .arabic ? "تخطي" : "Skip")
                                     .font(.headline)
                                     .padding(.horizontal, 16)
                                     .padding(.vertical, 8)
@@ -101,7 +103,11 @@ struct IntroView: View {
                                     .foregroundColor(.white)
                                     .cornerRadius(10)
                                     .padding()
+                                
                             }
+                            .accessibilityLabel(userLanguage == .arabic ? "تخطي المقدمة" : "Skip Intro")
+                                                        .accessibilityHint(userLanguage == .arabic ? "اضغط لتجاوز المقدمة والانتقال إلى الصفحة التالية" : "Tap to skip the intro and go to the next screen")
+                                                        .accessibilityAddTraits(.isButton)
                         }
                     }
 
@@ -169,3 +175,4 @@ struct IntroView: View {
 #Preview {
     IntroView()
 }
+

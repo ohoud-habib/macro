@@ -4,10 +4,170 @@
     "" : {
 
     },
+    "%@ %lld: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$lld: %3$@"
+          }
+        }
+      }
+    },
+    "%@, Fact Screen" : {
+
+    },
+    "$1.99" : {
+
+    },
+    "Application loading screen" : {
+
+    },
+    "Arabic" : {
+
+    },
+    "Both stories are locked. Continue playing to unlock them." : {
+
+    },
     "Choose your preferred language\nاختر لغتك المفضلة" : {
 
     },
+    "Choose your preferred language. اختر لغتك المفضلة" : {
+
+    },
+    "Close" : {
+
+    },
+    "Consequences View, %@" : {
+
+    },
+    "Continue to consequences" : {
+
+    },
+    "Decision Options" : {
+
+    },
+    "Double tap to change language" : {
+
+    },
+    "Double tap to complete purchase" : {
+
+    },
+    "Double tap to enter %@" : {
+
+    },
+    "Double tap to exit consequences view" : {
+
+    },
+    "Double tap to flip the card" : {
+
+    },
+    "Double tap to open profile" : {
+
+    },
+    "Double tap to open settings" : {
+
+    },
+    "Double tap to open your profile" : {
+
+    },
+    "Double tap to proceed to %@ station" : {
+
+    },
+    "Double tap to proceed to the next scenario" : {
+
+    },
+    "Double tap to reset all progress" : {
+
+    },
+    "Double tap to return home" : {
+
+    },
+    "Double tap to return to home screen" : {
+
+    },
+    "Double tap to select English language" : {
+
+    },
+    "Double tap to toggle" : {
+
+    },
+    "Double tap to view player story cards" : {
+
+    },
+    "Double tap to view Sena story cards" : {
+
+    },
+    "Double tap to view your story" : {
+
+    },
     "English" : {
+
+    },
+    "Enjoy new facts, choices, and consequences." : {
+
+    },
+    "Fact: %@" : {
+
+    },
+    "Game stations" : {
+
+    },
+    "Go to profile" : {
+
+    },
+    "Go to settings" : {
+
+    },
+    "Home" : {
+
+    },
+    "Language selection screen" : {
+
+    },
+    "Language selector" : {
+
+    },
+    "Mode Selection Screen" : {
+
+    },
+    "Modes: %@" : {
+
+    },
+    "Navigation buttons" : {
+
+    },
+    "Next" : {
+
+    },
+    "Off" : {
+
+    },
+    "On" : {
+
+    },
+    "Opens the profile page" : {
+
+    },
+    "Opens the settings page" : {
+
+    },
+    "Player story" : {
+
+    },
+    "Player story cards" : {
+
+    },
+    "Price: 1 dollar and 99 cents" : {
+
+    },
+    "Profile" : {
+
+    },
+    "Profile information" : {
+
+    },
+    "Profile page" : {
 
     },
     "SCORE:\n%lld" : {
@@ -20,13 +180,163 @@
         }
       }
     },
+    "Select this option" : {
+
+    },
+    "Sena story" : {
+
+    },
+    "Sena story cards" : {
+
+    },
+    "Settings" : {
+
+    },
+    "Settings Screen" : {
+
+    },
     "Skip" : {
+
+    },
+    "Skip Intro" : {
+
+    },
+    "Start exploring the app" : {
+
+    },
+    "Station selection screen" : {
+
+    },
+    "Story" : {
+
+    },
+    "Story selection based on your karma level" : {
+
+    },
+    "Tap to skip the intro and go to the next screen" : {
+
+    },
+    "This creature appears based on your score" : {
+
+    },
+    "Unlock" : {
+
+    },
+    "Unlock station" : {
+
+    },
+    "Year: %@" : {
+
+    },
+    "أزرار التنقل" : {
+
+    },
+    "اضغط لتبدأ في استكشاف التطبيق" : {
+
+    },
+    "اضغط لتجاوز المقدمة والانتقال إلى الصفحة التالية" : {
+
+    },
+    "اضغط لتحديد هذا الخيار" : {
+
+    },
+    "اضغط للانتقال إلى %@" : {
+
+    },
+    "اضغط مرتين لإتمام عملية الشراء" : {
+
+    },
+    "اضغط مرتين لاختيار اللغة العربية" : {
+
+    },
+    "اضغط مرتين لعرض القصة" : {
+
+    },
+    "اضغط مرتين لفتح الإعدادات" : {
+
+    },
+    "اضغط مرتين لفتح الملف الشخصي" : {
+
+    },
+    "اضغط مرتين للانتقال إلى محطة %@" : {
+
+    },
+    "اضغط مرتين للعودة إلى الصفحة الرئيسية" : {
+
+    },
+    "افتح حقائق وخيارات ونتائج جديدة." : {
+
+    },
+    "افتح صفحة الإعدادات" : {
+
+    },
+    "افتح صفحة ملفك الشخصي" : {
+
+    },
+    "الأنماط: %@" : {
+
+    },
+    "الإعدادات" : {
+
+    },
+    "التالي" : {
+
+    },
+    "السعر: دولار واحد و99 سنت" : {
+
+    },
+    "الصفحة الرئيسية" : {
 
     },
     "العربية" : {
 
     },
+    "القصة" : {
+
+    },
+    "الملف الشخصي" : {
+
+    },
+    "انتقل إلى الإعدادات" : {
+
+    },
+    "انتقل إلى الملف الشخصي" : {
+
+    },
+    "انتقل إلى النتائج" : {
+
+    },
+    "تخطي" : {
+
+    },
+    "تخطي المقدمة" : {
+
+    },
+    "شاشة اختيار المحطة" : {
+
+    },
+    "شاشة اختيار الوضع" : {
+
+    },
+    "صفحة الملف الشخصي" : {
+
+    },
+    "فتح" : {
+
+    },
+    "فتح المحطة" : {
+
+    },
+    "محطات اللعبة" : {
+
+    },
+    "معلومات الملف الشخصي" : {
+
+    },
     "نقاطك:\n%lld" : {
+
+    },
+    "يظهر هذا المخلوق بناءً على نقاطك" : {
 
     }
   },
